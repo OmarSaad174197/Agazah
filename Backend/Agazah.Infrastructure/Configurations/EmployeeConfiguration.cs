@@ -29,5 +29,13 @@ public class EmployeeConfiguration : IEntityTypeConfiguration<Employee>
             .WithOne(x => x.Employee)
             .HasForeignKey(x => x.EmployeeId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasIndex(x => x.EmployeeNumber)
+            .IsUnique()
+            .HasFilter("[IsDeleted] = 0");
+
+        builder.HasIndex(x => x.EmployeeName)
+            .IsUnique()
+            .HasFilter("[IsDeleted] = 0");
     }
 }

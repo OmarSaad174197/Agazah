@@ -15,6 +15,13 @@ public class AppDbContext : DbContext
         modelBuilder.ApplyConfigurationsFromAssembly(
             typeof(AppDbContext).Assembly);
         
+        modelBuilder.Entity<Employee>()
+            .HasQueryFilter(x => !x.IsDeleted);
+
+        modelBuilder.Entity<Vacation>()
+            .HasQueryFilter(x => !x.IsDeleted);
+
         base.OnModelCreating(modelBuilder);
     }
+
 }
