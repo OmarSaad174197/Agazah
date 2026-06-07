@@ -1,3 +1,4 @@
+using Agazah.Domain.Common;
 using Agazah.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 namespace Agazah.Infrastructure.Persistence;
@@ -24,4 +25,23 @@ public class AppDbContext : DbContext
         base.OnModelCreating(modelBuilder);
     }
 
+    //Method to automatically set Audit fields (CreatedOn, ModifiedOn) when saving changes to the database
+    public override async Task<int> SaveChangesAsync(
+    CancellationToken cancellationToken = default)
+    {
+        foreach (var entry in ChangeTracker.Entries<BaseEntity>())
+        {
+            if (entry.State == EntityState.Added)
+            {
+                entry.Entity.CreatedOn = DateTime.UtcNow;
+            }
+
+            if (entry.State == EntityState.Modified)
+            {
+                entry.Entity.ModifiedOn = DateTime.UtcNow;
+            }
+        }
+
+        return await base.SaveChangesAsync(cancellationToken);
+    }
 }
