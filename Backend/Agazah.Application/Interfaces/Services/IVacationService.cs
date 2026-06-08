@@ -13,7 +13,8 @@ public interface IVacationService
         long vacationId,
         CancellationToken cancellationToken = default);
 
-    Task<List<VacationResponseDto>> GetEmployeeVacationsAsync(
-        long employeeId,
-        CancellationToken cancellationToken = default);
+    Task<List<VacationResponseDto>>
+        GetEmployeeVacationsAsync(
+            long employeeId,
+            CancellationToken cancellationToken = default);
 }

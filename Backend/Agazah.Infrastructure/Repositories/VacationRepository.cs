@@ -51,4 +51,15 @@ public class VacationRepository : IVacationRepository
                 x.StartDate.Year == year)
             .SumAsync(x => x.Duration);
     }
+
+    public async Task<List<Vacation>>
+        GetEmployeeVacationsWithEmployeeAsync(
+            long employeeId)
+    {
+        return await _context.Vacations
+            .Include(x => x.Employee)
+            .Where(x => x.EmployeeId == employeeId)
+            .AsNoTracking()
+            .ToListAsync();
+    }
 }

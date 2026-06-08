@@ -1,4 +1,6 @@
+using Agazah.Application.Interfaces.Repositories;
 using Agazah.Infrastructure.Persistence;
+using Agazah.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,6 +19,12 @@ public static class InfrastructureServiceRegistration
                 configuration.GetConnectionString("DefaultConnection"));
         });
 
+        services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+
+        services.AddScoped<IVacationRepository, VacationRepository>();
+
+        services.AddScoped<IUnitOfWork,Agazah.Infrastructure.UnitOfWork.UnitOfWork>();
+        
         return services;
     }
 }

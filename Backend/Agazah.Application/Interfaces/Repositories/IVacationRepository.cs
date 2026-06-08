@@ -18,4 +18,7 @@ public interface IVacationRepository
         long employeeId,
         VacationType vacationType,
         int year);
+
+    Task<List<Vacation>> GetEmployeeVacationsWithEmployeeAsync(
+    long employeeId);
 }

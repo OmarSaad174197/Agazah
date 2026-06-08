@@ -11,6 +11,9 @@ public class VacationProfile : Profile
     {
         CreateMap<CreateVacationDto, Vacation>();
 
-        CreateMap<Vacation, VacationResponseDto>();
+        CreateMap<Vacation, VacationResponseDto>()
+            .ForMember (
+                dest => dest.EmployeeName, 
+                opt => opt.MapFrom(src => src.Employee.EmployeeName));        
     }
 }
