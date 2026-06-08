@@ -18,7 +18,7 @@ public interface IEmployeeService
         long id,
         CancellationToken cancellationToken = default);
 
-    Task<EmployeeDetailsDto?> GetDetailsAsync(
+    Task<EmployeeDetailsDto> GetDetailsAsync(
         long id,
         CancellationToken cancellationToken = default);
 

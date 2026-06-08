@@ -29,6 +29,7 @@ public class EmployeeRepository : IEmployeeRepository
     {
         return await _context.Employees
             .Include(x => x.Vacations)
+            .AsSplitQuery()
             .FirstOrDefaultAsync(x => x.Id == id);
     }
 
@@ -64,6 +65,22 @@ public class EmployeeRepository : IEmployeeRepository
         int pageSize)
     {
         return await _context.Employees
+            .AsNoTracking()
+            .OrderBy(x => x.Id)
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+    }
+    // To get paged employees with their vacations, we can implement the new method in the repository
+    public async Task<List<Employee>>
+        GetPagedWithVacationsAsync(
+            int pageNumber,
+            int pageSize)
+    {
+        return await _context.Employees
+            .AsNoTracking()
+            .Include(x => x.Vacations)
+            .AsSplitQuery()
             .OrderBy(x => x.Id)
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)

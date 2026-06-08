@@ -12,7 +12,7 @@ public interface IEmployeeRepository
     string employeeNumber,
     long? excludeEmployeeId = null);
 
-Task<bool> ExistsByNameAsync(
+    Task<bool> ExistsByNameAsync(
     string employeeName,
     long? excludeEmployeeId = null);
     Task AddAsync(Employee employee);
@@ -23,5 +23,10 @@ Task<bool> ExistsByNameAsync(
         int pageNumber,
         int pageSize);
 
+    // To get paged employees with their vacations, we can add a new method in the repository
+    Task<List<Employee>> GetPagedWithVacationsAsync(
+    int pageNumber,
+    int pageSize);
     Task<int> CountAsync();
+    
 }

@@ -10,7 +10,9 @@ public class UpdateEmployeeDtoValidator
     {
         RuleFor(x => x.EmployeeName)
             .NotEmpty()
-            .MaximumLength(200);
+            .MaximumLength(200)
+            .Must(x=> !string.IsNullOrWhiteSpace(x));
+
 
         RuleFor(x => x.BirthDate)
             .LessThan(DateTime.Today);
