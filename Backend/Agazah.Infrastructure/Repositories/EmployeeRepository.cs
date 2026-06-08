@@ -33,17 +33,25 @@ public class EmployeeRepository : IEmployeeRepository
     }
 
     public async Task<bool> ExistsByNumberAsync(
-        string employeeNumber)
+        string employeeNumber,
+        long? excludeEmployeeId = null)
     {
         return await _context.Employees
-            .AnyAsync(x => x.EmployeeNumber == employeeNumber);
+            .AnyAsync(x =>
+                x.EmployeeNumber == employeeNumber &&
+                (!excludeEmployeeId.HasValue ||
+                x.Id != excludeEmployeeId.Value));
     }
 
     public async Task<bool> ExistsByNameAsync(
-        string employeeName)
+        string employeeName,
+        long? excludeEmployeeId = null)
     {
         return await _context.Employees
-            .AnyAsync(x => x.EmployeeName == employeeName);
+            .AnyAsync(x =>
+                x.EmployeeName == employeeName &&
+                (!excludeEmployeeId.HasValue ||
+                x.Id != excludeEmployeeId.Value));
     }
 
     public void Update(Employee employee)

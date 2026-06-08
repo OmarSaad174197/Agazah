@@ -9,11 +9,12 @@ public interface IEmployeeRepository
     Task<Employee?> GetWithVacationsAsync(long id);
 
     Task<bool> ExistsByNumberAsync(
-        string employeeNumber);
+    string employeeNumber,
+    long? excludeEmployeeId = null);
 
-    Task<bool> ExistsByNameAsync(
-        string employeeName);
-
+Task<bool> ExistsByNameAsync(
+    string employeeName,
+    long? excludeEmployeeId = null);
     Task AddAsync(Employee employee);
 
     void Update(Employee employee);
