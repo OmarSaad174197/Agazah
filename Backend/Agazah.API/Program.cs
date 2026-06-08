@@ -1,3 +1,4 @@
+using Agazah.API.Extensions;
 using Agazah.Application.DependencyInjection;
 using Agazah.Infrastructure.DependencyInjection;
 
@@ -32,6 +33,7 @@ namespace Agazah.API
 
             app.UseAuthorization();
 
+            app.UseGlobalExceptionHandling();
 
             app.MapControllers();
 
