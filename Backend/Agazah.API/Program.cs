@@ -31,9 +31,9 @@ namespace Agazah.API
 
             app.UseHttpsRedirection();
 
-            app.UseAuthorization();
-
             app.UseGlobalExceptionHandling();
+
+            app.UseAuthorization();
 
             app.MapControllers();
 

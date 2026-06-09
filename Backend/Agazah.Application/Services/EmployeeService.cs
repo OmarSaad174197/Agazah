@@ -6,6 +6,7 @@ using Agazah.Application.Interfaces.Repositories;
 using Agazah.Application.Interfaces.Services;
 using Agazah.Domain.Entities;
 using AutoMapper;
+using FluentValidation;
 
 namespace Agazah.Application.Services;
 
@@ -14,21 +15,31 @@ public class EmployeeService : IEmployeeService
     private readonly IEmployeeRepository _employeeRepository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
+    private readonly IValidator<CreateEmployeeDto> _createValidator;
+    private readonly IValidator<UpdateEmployeeDto> _updateValidator;
 
     public EmployeeService(
         IEmployeeRepository employeeRepository,
         IUnitOfWork unitOfWork,
-        IMapper mapper)
+        IMapper mapper,
+        IValidator<CreateEmployeeDto> createValidator,
+        IValidator<UpdateEmployeeDto> updateValidator)
     {
         _employeeRepository = employeeRepository;
         _unitOfWork = unitOfWork;
         _mapper = mapper;
+        _createValidator = createValidator;
+        _updateValidator = updateValidator;
     }
 
     public async Task<long> CreateAsync(
         CreateEmployeeDto dto,
         CancellationToken cancellationToken = default)
     {
+        await _createValidator.ValidateAndThrowAsync(
+            dto,
+            cancellationToken);
+
         var employeeName = dto.EmployeeName.Trim();
 
         var employeeNumber = dto.EmployeeNumber.Trim();
@@ -91,6 +102,10 @@ public class EmployeeService : IEmployeeService
         UpdateEmployeeDto dto,
         CancellationToken cancellationToken = default)
     {
+        await _updateValidator.ValidateAndThrowAsync(
+            dto,
+            cancellationToken);
+
         var employee =
             await _employeeRepository.GetByIdAsync(id);
 

@@ -1,6 +1,8 @@
 using System.Net;
 using System.Text.Json;
+using Agazah.API.Models;
 using Agazah.Application.Exceptions;
+using FluentValidation;
 
 namespace Agazah.API.Middleware;
 
@@ -21,11 +23,11 @@ public class ExceptionHandlingMiddleware
         {
             await _next(context);
         }
-        catch (Exception ex)
+        catch (Exception exception)
         {
             await HandleExceptionAsync(
                 context,
-                ex);
+                exception);
         }
     }
 
@@ -39,11 +41,14 @@ public class ExceptionHandlingMiddleware
         var statusCode =
             exception switch
             {
-                NotFoundException =>
-                    (int)HttpStatusCode.NotFound,
+                ValidationException =>
+                    (int)HttpStatusCode.BadRequest,
 
                 BusinessRuleException =>
                     (int)HttpStatusCode.BadRequest,
+
+                NotFoundException =>
+                    (int)HttpStatusCode.NotFound,
 
                 _ =>
                     (int)HttpStatusCode.InternalServerError
@@ -52,12 +57,59 @@ public class ExceptionHandlingMiddleware
         context.Response.StatusCode =
             statusCode;
 
-        var response = new
+        var response = new ErrorResponse
         {
-            Message = exception.Message
+            StatusCode = statusCode,
+            TimeStamp = DateTime.UtcNow
         };
 
+        switch (exception)
+        {
+            case ValidationException validationException:
+
+                response.Message =
+                    "Validation failed.";
+
+                response.Errors =
+                    validationException.Errors
+                        .Select(x => x.ErrorMessage)
+                        .Distinct()
+                        .ToList();
+
+                break;
+
+            case BusinessRuleException:
+
+                response.Message =
+                    exception.Message;
+
+                break;
+
+            case NotFoundException:
+
+                response.Message =
+                    exception.Message;
+
+                break;
+
+            default:
+
+                response.Message =
+                    "An unexpected error occurred.";
+
+                break;
+        }
+
+        var json =
+            JsonSerializer.Serialize(
+                response,
+                new JsonSerializerOptions
+                {
+                    PropertyNamingPolicy =
+                        JsonNamingPolicy.CamelCase
+                });
+
         await context.Response.WriteAsync(
-            JsonSerializer.Serialize(response));
+            json);
     }
 }

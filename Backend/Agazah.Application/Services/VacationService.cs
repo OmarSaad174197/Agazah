@@ -4,6 +4,7 @@ using Agazah.Application.Exceptions;
 using Agazah.Application.Interfaces.Repositories;
 using Agazah.Domain.Entities;
 using AutoMapper;
+using FluentValidation;
 namespace Agazah.Application.Interfaces.Services;
 
 public class VacationService : IVacationService
@@ -12,23 +13,32 @@ public class VacationService : IVacationService
     private readonly IEmployeeRepository _employeeRepository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
+    private readonly IValidator<CreateVacationDto> _validator;
+    
 
     public VacationService(
         IVacationRepository vacationRepository,
         IEmployeeRepository employeeRepository,
         IUnitOfWork unitOfWork,
-        IMapper mapper)
+        IMapper mapper,
+        IValidator<CreateVacationDto> validator)
     {
         _vacationRepository = vacationRepository;
         _employeeRepository = employeeRepository;
         _unitOfWork = unitOfWork;
         _mapper = mapper;
+        _validator = validator;
     }
 
     public async Task<long> CreateAsync(
         CreateVacationDto dto,
         CancellationToken cancellationToken = default)
     {
+
+        await _validator.ValidateAndThrowAsync(
+            dto,
+            cancellationToken);
+            
         var employee =
             await _employeeRepository
                 .GetByIdAsync(dto.EmployeeId);
