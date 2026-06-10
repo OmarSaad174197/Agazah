@@ -1,0 +1,19 @@
+<h1>إدارة الموظفين</h1>
+
+<div *ngIf="isLoading">
+    Loading...
+</div>
+
+<ul *ngIf="!isLoading">
+
+    <li *ngFor="let employee of employees">
+
+        {{ employee.employeeNumber }}
+
+        -
+
+        {{ employee.employeeName }}
+
+    </li>
+
+</ul>
