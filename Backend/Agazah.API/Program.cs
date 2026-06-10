@@ -19,6 +19,17 @@ namespace Agazah.API
             builder.Services.AddApplication();
             builder.Services.AddInfrastructure(
                 builder.Configuration);
+
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AngularPolicy", policy =>
+                {
+                    policy
+                        .WithOrigins("http://localhost:4200")
+                        .AllowAnyHeader()
+                        .AllowAnyMethod();
+                });
+            });
             
             var app = builder.Build();
 
@@ -30,6 +41,8 @@ namespace Agazah.API
             }
 
             app.UseHttpsRedirection();
+
+            app.UseCors("AngularPolicy");
 
             app.UseGlobalExceptionHandling();
 
