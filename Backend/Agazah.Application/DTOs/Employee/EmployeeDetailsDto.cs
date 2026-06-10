@@ -16,6 +16,5 @@ public class EmployeeDetailsDto
 
     public int TotalVacationDays { get; set; }
 
-    public List<VacationResponseDto> Vacations { get; set; }
-        = [];
+    public List<VacationResponseDto> Vacations { get; set; } = [];
 }

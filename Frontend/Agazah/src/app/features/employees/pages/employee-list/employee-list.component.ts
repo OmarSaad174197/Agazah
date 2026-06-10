@@ -12,13 +12,23 @@ from '../../services/employee.service';
 import { Employee }
 from '../../models/employee.model';
 
+import { MATERIAL_MODULES }
+from '../../../../shared/material/material.imports';
+
+import { getQualificationName }
+from '../../../../shared/helpers/qualification.helper';
+
+import { PageEvent }
+from '@angular/material/paginator';
 @Component({
   selector: 'app-employee-list',
 
   standalone: true,
 
+
   imports: [
-    CommonModule
+    CommonModule,
+    ...MATERIAL_MODULES
   ],
 
   templateUrl:
@@ -42,6 +52,16 @@ implements OnInit {
   pageSize = 5;
 
   totalCount = 0;
+
+  displayedColumns = [
+    'employeeNumber',
+    'employeeName',
+    'qualification',
+    'totalVacationDays',
+    'actions'
+  ];
+
+  getQualificationName = getQualificationName;
 
   ngOnInit(): void {
 
@@ -74,5 +94,18 @@ implements OnInit {
           this.isLoading = false;
         }
       });
+  }
+
+  onPageChanged(
+    event: PageEvent
+  ): void {
+
+    this.pageNumber =
+      event.pageIndex + 1;
+
+    this.pageSize =
+      event.pageSize;
+
+    this.loadEmployees();
   }
 }

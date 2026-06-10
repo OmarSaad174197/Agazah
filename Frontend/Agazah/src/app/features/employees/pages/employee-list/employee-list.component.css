@@ -1,0 +1,9 @@
+table {
+  width: 100%
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  padding: 2rem;
+}
