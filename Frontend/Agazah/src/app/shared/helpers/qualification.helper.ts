@@ -1,3 +1,4 @@
+// Function to get the name of the qualification based on the enum value
 import { Qualification }
 from '../enums/qualification.enum';
 

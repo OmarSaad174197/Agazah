@@ -1,0 +1,117 @@
+<h2 mat-dialog-title>
+
+  إضافة موظف
+
+</h2>
+
+<mat-dialog-content>
+
+  <form [formGroup]="form">
+
+    <mat-form-field appearance="outline">
+
+      <mat-label>
+
+        رقم الموظف
+
+      </mat-label>
+
+      <input
+        matInput
+        formControlName="employeeNumber">
+
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+
+      <mat-label>
+
+        اسم الموظف
+
+      </mat-label>
+
+      <input
+        matInput
+        formControlName="employeeName">
+
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+
+      <mat-label>
+
+        تاريخ الميلاد
+
+      </mat-label>
+
+      <input
+        matInput
+        [matDatepicker]="picker"
+        formControlName="birthDate">
+
+      <mat-datepicker-toggle
+        matSuffix
+        [for]="picker">
+      </mat-datepicker-toggle>
+
+      <mat-datepicker
+        #picker>
+      </mat-datepicker>
+
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+
+      <mat-label>
+
+        المؤهل
+
+      </mat-label>
+
+      <mat-select
+        formControlName="qualification">
+
+        @for (
+          qualification of qualifications;
+          track qualification)
+        {
+          <mat-option
+            [value]="qualification">
+
+            {{
+              getQualificationName(
+                qualification)
+            }}
+
+          </mat-option>
+        }
+
+      </mat-select>
+
+    </mat-form-field>
+
+  </form>
+
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+
+  <button
+    mat-button
+    type="button"
+    (click)="close()">
+
+    إغلاق
+
+  </button>
+
+  <button
+    mat-raised-button
+    type="button"
+    (click)="save()">
+
+    حفظ
+
+  </button>
+
+</mat-dialog-actions>

@@ -4,7 +4,14 @@ import {
   inject
 } from '@angular/core';
 
-import { CommonModule } from '@angular/common';
+import { CommonModule }
+from '@angular/common';
+
+import { MatDialog }
+from '@angular/material/dialog';
+
+import { EmployeeFormDialogComponent }
+from '../../components/employee-form-dialog/employee-form-dialog.component';
 
 import { EmployeeService }
 from '../../services/employee.service';
@@ -42,6 +49,9 @@ implements OnInit {
 
   private readonly employeeService =
     inject(EmployeeService);
+
+  private readonly dialog =
+    inject(MatDialog);
 
   employees: Employee[] = [];
 
@@ -94,6 +104,28 @@ implements OnInit {
           this.isLoading = false;
         }
       });
+  }
+
+  openCreateDialog(): void {
+
+    const dialogRef =
+        this.dialog.open(
+            EmployeeFormDialogComponent,
+            {
+                width: '600px',
+                disableClose: true
+            });
+
+    dialogRef.afterClosed()
+        .subscribe(result => {
+
+            if (!result) {
+
+                return;
+            }
+
+            console.log(result);
+        });
   }
 
   onPageChanged(
