@@ -19,7 +19,22 @@
       <input
         matInput
         formControlName="employeeNumber">
+      <mat-error
+        *ngIf="
+        form.controls.employeeNumber.hasError('required')
+        && form.controls.employeeNumber.touched">
 
+        رقم الموظف مطلوب
+
+      </mat-error>
+
+      <mat-error
+        *ngIf="
+        form.controls.employeeNumber.hasError('maxlength')">
+
+        الحد الأقصى 20 حرف
+
+      </mat-error>
     </mat-form-field>
 
     <mat-form-field appearance="outline">
@@ -46,7 +61,8 @@
 
       <input
         matInput
-        [matDatepicker]="picker"
+        [max]="maxBirthDate"
+        [matDatepicker]="picker"]
         formControlName="birthDate">
 
       <mat-datepicker-toggle
@@ -57,7 +73,14 @@
       <mat-datepicker
         #picker>
       </mat-datepicker>
+        <mat-error
+          *ngIf="
+          form.controls.birthDate.hasError('required')
+          && form.controls.birthDate.touched">
 
+          تاريخ الميلاد مطلوب
+
+        </mat-error>
     </mat-form-field>
 
     <mat-form-field appearance="outline">
@@ -87,7 +110,13 @@
         }
 
       </mat-select>
+        <mat-error
+          *ngIf="
+          form.controls.qualification.hasError('required')
+          && form.controls.qualification.touched">
 
+          المؤهل مطلوب
+      </mat-error>
     </mat-form-field>
 
   </form>

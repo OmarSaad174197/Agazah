@@ -25,6 +25,9 @@ from '../../../../shared/material/material.imports';
 import { getQualificationName }
 from '../../../../shared/helpers/qualification.helper';
 
+import { CreateEmployee }
+from '../../models/create-employee.model';
+
 import { PageEvent }
 from '@angular/material/paginator';
 @Component({
@@ -124,7 +127,20 @@ implements OnInit {
                 return;
             }
 
-            console.log(result);
+            this.employeeService
+              .create(result as CreateEmployee)
+              .subscribe({
+
+                next: () => {
+
+                  this.loadEmployees();
+                },
+
+                error: error => {
+
+                  console.error(error);
+                }
+              });
         });
   }
 

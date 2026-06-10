@@ -46,28 +46,35 @@ export class EmployeeFormDialogComponent {
     Object.values(Qualification)
       .filter(x => typeof x === 'number');
 
+  maxBirthDate = new Date();
   form = this.fb.group({
 
-    employeeNumber: [
-      '',
-      Validators.required
-    ],
-
-    employeeName: [
-      '',
-      Validators.required
-    ],
-
-    birthDate: [
-      null,
-      Validators.required
-    ],
-
-    qualification: [
-      null,
-      Validators.required
+  employeeNumber: [
+    '',
+    [
+      Validators.required,
+      Validators.maxLength(20)
     ]
-  });
+  ],
+
+  employeeName: [
+    '',
+    [
+      Validators.required,
+      Validators.maxLength(100)
+    ]
+  ],
+
+  birthDate: [
+    null,
+    Validators.required
+  ],
+
+  qualification: [
+    null,
+    Validators.required
+  ]
+});
 
   save(): void {
 
@@ -88,25 +95,28 @@ export class EmployeeFormDialogComponent {
   }
 
   getQualificationName(
-    value: Qualification
+      value: Qualification
   ): string {
 
     switch (value) {
 
-      case Qualification.Diploma:
-        return 'متوسط';
+        case Qualification.HighSchool:
+            return 'ثانوية عامة';
 
-      case Qualification.Bachelor:
-        return 'بكالوريوس';
+        case Qualification.Diploma:
+            return 'دبلوم';
 
-      case Qualification.Master:
-        return 'ماجستير';
+        case Qualification.Bachelor:
+            return 'بكالوريوس';
 
-      case Qualification.PhD:
-        return 'دكتوراه';
+        case Qualification.Master:
+            return 'ماجستير';
 
-      default:
-        return '';
+        case Qualification.PhD:
+            return 'دكتوراه';
+
+        default:
+            return '';
     }
   }
 }

@@ -1,3 +1,4 @@
+import { Qualification } from '../../../shared/enums/qualification.enum';
 import { Vacation } from '../../vacations/models/vacation.model';
 
 export interface EmployeeDetails {
@@ -9,7 +10,7 @@ export interface EmployeeDetails {
 
     birthDate: string;
 
-    qualification: string;
+    qualification: Qualification;
 
     totalVacationDays: number;
 

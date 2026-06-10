@@ -1,6 +1,12 @@
 export enum Qualification {
-    Diploma = 1,
-    Bachelor = 2,
-    Master = 3,
-    PhD = 4
+
+    HighSchool = 1,
+
+    Diploma = 2,
+
+    Bachelor = 3,
+
+    Master = 4,
+
+    PhD = 5
 }
