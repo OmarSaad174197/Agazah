@@ -4,7 +4,10 @@ import {
   HttpInterceptorFn
 } from '@angular/common/http';
 
-import { catchError, throwError } from 'rxjs';
+import {
+  catchError,
+  throwError
+} from 'rxjs';
 
 import { NotificationService }
   from '../services/notification.service';
@@ -31,7 +34,7 @@ export const errorInterceptor: HttpInterceptorFn =
         if (apiError?.errors?.length) {
 
           message =
-            apiError.errors.join('\n');
+            apiError.errors.join(' • ');
 
         } else if (apiError?.message) {
 
@@ -45,25 +48,26 @@ export const errorInterceptor: HttpInterceptorFn =
             case 0:
               message =
                 'تعذر الاتصال بالخادم. تأكد من تشغيل النظام.';
-
               break;
 
             case 400:
               message =
                 'البيانات المدخلة غير صحيحة.';
-
               break;
 
             case 404:
               message =
                 'العنصر المطلوب غير موجود.';
-
               break;
 
             case 500:
               message =
                 'حدث خطأ داخلي في الخادم.';
+              break;
 
+            default:
+              message =
+                'حدث خطأ أثناء تنفيذ العملية.';
               break;
           }
         }

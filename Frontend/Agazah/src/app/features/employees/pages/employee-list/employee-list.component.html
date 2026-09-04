@@ -3,165 +3,255 @@
   <mat-card-header>
 
     <mat-card-title>
-
       إدارة الموظفين
-
     </mat-card-title>
 
   </mat-card-header>
 
+
   <mat-card-content>
 
-    @if (isLoading)
-    {
-      <div class="loading-container">
+    <div class="page-header">
 
-        <mat-spinner></mat-spinner>
+      <div>
+        <h1>
+          الموظفون
+        </h1>
 
+        <p>
+          إدارة بيانات الموظفين والإجازات
+        </p>
       </div>
-    }
 
-    @else
-    {
       <button
         mat-raised-button
         type="button"
         (click)="openCreateDialog()">
 
+        <mat-icon>
+          person_add
+        </mat-icon>
+
         إضافة موظف
 
       </button>
 
-      <br>
-      <br>
+    </div>
 
-      <table
-        mat-table
-        [dataSource]="employees">
 
-        <ng-container matColumnDef="employeeNumber">
+    @if (isLoading) {
 
-          <th mat-header-cell *matHeaderCellDef>
+      <div class="loading-container">
 
-            رقم الموظف
+        <mat-spinner></mat-spinner>
 
-          </th>
+        <span>
+          جاري تحميل الموظفين...
+        </span>
 
-          <td mat-cell *matCellDef="let employee">
+      </div>
 
-            {{ employee.employeeNumber }}
+    } @else if (employees.length === 0) {
 
-          </td>
+      <div class="empty-state">
 
-        </ng-container>
+        <mat-icon>
+          groups
+        </mat-icon>
 
-        <ng-container matColumnDef="employeeName">
+        <h2>
+          لا يوجد موظفون
+        </h2>
 
-          <th mat-header-cell *matHeaderCellDef>
+        <p>
+          لم تتم إضافة أي موظفين حتى الآن.
+        </p>
 
-            الاسم
+        <button
+          mat-raised-button
+          type="button"
+          (click)="openCreateDialog()">
 
-          </th>
+          إضافة أول موظف
 
-          <td mat-cell *matCellDef="let employee">
+        </button>
 
-            {{ employee.employeeName }}
+      </div>
 
-          </td>
+    } @else {
 
-        </ng-container>
+      <div class="table-container">
 
-        <ng-container matColumnDef="qualification">
+        <table
+          mat-table
+          [dataSource]="employees">
 
-          <th mat-header-cell *matHeaderCellDef>
 
-            المؤهل
+          <ng-container
+            matColumnDef="employeeNumber">
 
-          </th>
+            <th
+              mat-header-cell
+              *matHeaderCellDef>
 
-          <td mat-cell *matCellDef="let employee">
+              رقم الموظف
 
-            {{
-              getQualificationName(
-                employee.qualification)
-            }}
+            </th>
 
-          </td>
+            <td
+              mat-cell
+              *matCellDef="let employee">
 
-        </ng-container>
+              {{ employee.employeeNumber }}
 
-        <ng-container matColumnDef="totalVacationDays">
+            </td>
 
-          <th mat-header-cell *matHeaderCellDef>
+          </ng-container>
 
-            أيام الإجازات
 
-          </th>
+          <ng-container
+            matColumnDef="employeeName">
 
-          <td mat-cell *matCellDef="let employee">
+            <th
+              mat-header-cell
+              *matHeaderCellDef>
 
-            {{ employee.totalVacationDays }}
+              اسم الموظف
 
-          </td>
+            </th>
 
-        </ng-container>
+            <td
+              mat-cell
+              *matCellDef="let employee">
 
-        <ng-container matColumnDef="actions">
+              {{ employee.employeeName }}
 
-          <th mat-header-cell *matHeaderCellDef>
+            </td>
 
-            العمليات
+          </ng-container>
 
-          </th>
 
-          <td mat-cell *matCellDef="let employee">
+          <ng-container
+            matColumnDef="qualification">
 
-            <button
-              mat-icon-button>
+            <th
+              mat-header-cell
+              *matHeaderCellDef>
 
-              <mat-icon>
+              المؤهل
 
-                edit
+            </th>
 
-              </mat-icon>
+            <td
+              mat-cell
+              *matCellDef="let employee">
 
-            </button>
+              {{
+                getQualificationName(
+                  employee.qualification
+                )
+              }}
 
-            <button
-              mat-icon-button>
+            </td>
 
-              <mat-icon>
+          </ng-container>
 
-                delete
 
-              </mat-icon>
+          <ng-container
+            matColumnDef="totalVacationDays">
 
-            </button>
+            <th
+              mat-header-cell
+              *matHeaderCellDef>
 
-          </td>
+              إجمالي أيام الإجازات
 
-        </ng-container>
+            </th>
 
-        <tr
-          mat-header-row
-          *matHeaderRowDef="displayedColumns">
-        </tr>
+            <td
+              mat-cell
+              *matCellDef="let employee">
 
-        <tr
-          mat-row
-          *matRowDef="
-            let row;
-            columns: displayedColumns">
-        </tr>
+              {{ employee.totalVacationDays }}
 
-      </table>
+              يوم
+
+            </td>
+
+          </ng-container>
+
+
+          <ng-container
+            matColumnDef="actions">
+
+            <th
+              mat-header-cell
+              *matHeaderCellDef>
+
+              الإجراءات
+
+            </th>
+
+            <td
+              mat-cell
+              *matCellDef="let employee">
+
+              <button
+                mat-icon-button
+                type="button"
+                aria-label="تعديل الموظف">
+
+                <mat-icon>
+                  edit
+                </mat-icon>
+
+              </button>
+
+
+              <button
+                mat-icon-button
+                type="button"
+                aria-label="حذف الموظف">
+
+                <mat-icon>
+                  delete
+                </mat-icon>
+
+              </button>
+
+            </td>
+
+          </ng-container>
+
+
+          <tr
+            mat-header-row
+            *matHeaderRowDef="displayedColumns">
+
+          </tr>
+
+
+          <tr
+            mat-row
+            *matRowDef="
+              let row;
+              columns: displayedColumns;
+            ">
+
+          </tr>
+
+        </table>
+
+      </div>
+
 
       <mat-paginator
         [length]="totalCount"
         [pageSize]="pageSize"
         [pageIndex]="pageNumber - 1"
-        [pageSizeOptions]="[5,10,20]"
+        [pageSizeOptions]="[5, 10, 20]"
         (page)="onPageChanged($event)">
+
       </mat-paginator>
 
     }

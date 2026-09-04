@@ -4,37 +4,42 @@ import {
   inject
 } from '@angular/core';
 
-import { CommonModule }
-from '@angular/common';
+import {
+  CommonModule
+} from '@angular/common';
 
-import { MatDialog }
-from '@angular/material/dialog';
+import {
+  PageEvent
+} from '@angular/material/paginator';
 
-import { EmployeeFormDialogComponent }
-from '../../components/employee-form-dialog/employee-form-dialog.component';
+import {
+  MatDialog
+} from '@angular/material/dialog';
 
-import { EmployeeService }
-from '../../services/employee.service';
+import {
+  EmployeeService
+} from '../../services/employee.service';
 
-import { Employee }
-from '../../models/employee.model';
+import {
+  Employee
+} from '../../models/employee.model';
 
-import { MATERIAL_MODULES }
-from '../../../../shared/material/material.imports';
+import {
+  EmployeeFormDialogComponent
+} from '../../components/employee-form-dialog/employee-form-dialog.component';
 
-import { getQualificationName }
-from '../../../../shared/helpers/qualification.helper';
+import {
+  MATERIAL_MODULES
+} from '../../../../shared/material/material.imports';
 
-import { CreateEmployee }
-from '../../models/create-employee.model';
+import {
+  getQualificationName
+} from '../../../../shared/helpers/qualification.helper';
 
-import { PageEvent }
-from '@angular/material/paginator';
 @Component({
   selector: 'app-employee-list',
 
   standalone: true,
-
 
   imports: [
     CommonModule,
@@ -44,11 +49,11 @@ from '@angular/material/paginator';
   templateUrl:
     './employee-list.component.html',
 
-  styleUrls:
-    ['./employee-list.component.css']
+  styleUrl:
+    './employee-list.component.css'
 })
 export class EmployeeListComponent
-implements OnInit {
+  implements OnInit {
 
   private readonly employeeService =
     inject(EmployeeService);
@@ -74,7 +79,8 @@ implements OnInit {
     'actions'
   ];
 
-  getQualificationName = getQualificationName;
+  getQualificationName =
+    getQualificationName;
 
   ngOnInit(): void {
 
@@ -88,13 +94,14 @@ implements OnInit {
     this.employeeService
       .getPaged(
         this.pageNumber,
-        this.pageSize)
+        this.pageSize
+      )
       .subscribe({
 
         next: result => {
 
           this.employees =
-            result.items;
+            result.items ?? [];
 
           this.totalCount =
             result.totalCount;
@@ -109,41 +116,6 @@ implements OnInit {
       });
   }
 
-  openCreateDialog(): void {
-
-    const dialogRef =
-        this.dialog.open(
-            EmployeeFormDialogComponent,
-            {
-                width: '600px',
-                disableClose: true
-            });
-
-    dialogRef.afterClosed()
-        .subscribe(result => {
-
-            if (!result) {
-
-                return;
-            }
-
-            this.employeeService
-              .create(result as CreateEmployee)
-              .subscribe({
-
-                next: () => {
-
-                  this.loadEmployees();
-                },
-
-                error: error => {
-
-                  console.error(error);
-                }
-              });
-        });
-  }
-
   onPageChanged(
     event: PageEvent
   ): void {
@@ -155,5 +127,29 @@ implements OnInit {
       event.pageSize;
 
     this.loadEmployees();
+  }
+
+  openCreateDialog(): void {
+
+    const dialogRef =
+      this.dialog.open(
+        EmployeeFormDialogComponent,
+        {
+          width: '600px',
+          maxWidth: '95vw',
+          disableClose: true
+        }
+      );
+
+    dialogRef
+      .afterClosed()
+      .subscribe(created => {
+
+        if (!created) {
+          return;
+        }
+
+        this.loadEmployees();
+      });
   }
 }
