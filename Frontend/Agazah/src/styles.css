@@ -1,8 +1,29 @@
-/* You can add global styles to this file, and also import other style files */
-
-html, body { height: 100%; }
+html,
 body {
-       margin: 0;
-      font-family: Roboto, "Helvetica Neue", sans-serif;
-      direction:rtl;
-      }
+  margin: 0;
+  padding: 0;
+
+  direction: rtl;
+
+  font-family:
+    Arial,
+    "Segoe UI",
+    Tahoma,
+    sans-serif;
+}
+
+body {
+  min-height: 100vh;
+  background: #f5f7fa;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+button,
+input,
+textarea,
+select {
+  font-family: inherit;
+}
