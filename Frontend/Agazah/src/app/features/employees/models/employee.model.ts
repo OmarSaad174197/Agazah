@@ -10,4 +10,6 @@ export interface Employee {
     birthDate: string;
 
     qualification: Qualification;
+
+    totalVacationDays: number;
 }
