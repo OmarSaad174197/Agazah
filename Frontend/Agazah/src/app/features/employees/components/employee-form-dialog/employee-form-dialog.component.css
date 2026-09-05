@@ -1,0 +1,25 @@
+.employee-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  min-width: 600px;
+  padding-top: 8px;
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+mat-dialog-actions {
+  padding: 16px 24px 20px;
+  gap: 8px;
+}
+
+@media (max-width: 700px) {
+
+  .employee-form {
+    grid-template-columns: 1fr;
+    min-width: auto;
+  }
+
+}

@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="../Agazah.API/Agazah.API.csproj" />
+  <Project Path="../Agazah.Application/Agazah.Application.csproj" />
+  <Project Path="../Agazah.Infrastructure/Agazah.Infrastructure.csproj" />
+  <Project Path="Agazah.Domain.csproj" />
+</Solution>
