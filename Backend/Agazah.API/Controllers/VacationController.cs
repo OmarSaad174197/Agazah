@@ -43,7 +43,7 @@ public class VacationController : ControllerBase
         return Ok(vacations);
     }
 
-    [HttpGet("{vacationId:long}")]
+    [HttpDelete("{vacationId:long}")]
     public async Task<IActionResult> Delete(
         long vacationId,
         CancellationToken cancellationToken)
