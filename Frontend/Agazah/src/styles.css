@@ -2,7 +2,10 @@ html,
 body {
   margin: 0;
   padding: 0;
+  min-height: 100%;
+}
 
+body {
   direction: rtl;
 
   font-family:
@@ -10,11 +13,10 @@ body {
     "Segoe UI",
     Tahoma,
     sans-serif;
-}
 
-body {
-  min-height: 100vh;
-  background: #f5f7fa;
+  background: #f4f6f8;
+
+  color: #202124;
 }
 
 * {
@@ -26,4 +28,27 @@ input,
 textarea,
 select {
   font-family: inherit;
+}
+
+.page-container {
+  width: min(1400px, calc(100% - 32px));
+  margin: 24px auto;
+}
+
+.snackbar-success {
+  --mdc-snackbar-container-color: #1b8a5a;
+  --mdc-snackbar-supporting-text-color: #ffffff;
+  --mat-snack-bar-button-color: #ffffff;
+}
+
+.snackbar-error {
+  --mdc-snackbar-container-color: #c62828;
+  --mdc-snackbar-supporting-text-color: #ffffff;
+  --mat-snack-bar-button-color: #ffffff;
+}
+
+.snackbar-info {
+  --mdc-snackbar-container-color: #1565c0;
+  --mdc-snackbar-supporting-text-color: #ffffff;
+  --mat-snack-bar-button-color: #ffffff;
 }

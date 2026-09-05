@@ -1,4 +1,3 @@
-// Function to get the name of the qualification based on the enum value
 import { Qualification }
 from '../enums/qualification.enum';
 
@@ -8,8 +7,12 @@ export function getQualificationName(
 
   switch (qualification) {
 
+    case Qualification.HighSchool:
+      return 'ثانوية عامة';
+
     case Qualification.Diploma:
       return 'متوسط';
+
     case Qualification.Bachelor:
       return 'بكالوريوس';
 
