@@ -1,0 +1,105 @@
+.details-page {
+  max-width: 1200px;
+  margin: 24px auto;
+  padding: 0 16px;
+}
+
+.page-header {
+  margin-bottom: 20px;
+}
+
+.page-header h1 {
+  margin: 10px 0 0;
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.employee-info {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+  padding-top: 20px;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 18px;
+  border-radius: 12px;
+  background: #f7f8fa;
+}
+
+.info-item .label {
+  font-size: 14px;
+  opacity: 0.65;
+}
+
+.info-item .value {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.info-item.highlight {
+  grid-column: span 2;
+}
+
+.vacations-card {
+  margin-top: 20px;
+}
+
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+  margin-top: 20px;
+}
+
+table {
+  width: 100%;
+}
+
+th {
+  font-weight: 700;
+}
+
+.loading-container {
+  min-height: 350px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+}
+
+.empty-state,
+.empty-vacations {
+  min-height: 250px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  gap: 12px;
+}
+
+.empty-state mat-icon,
+.empty-vacations mat-icon {
+  width: 52px;
+  height: 52px;
+  font-size: 52px;
+}
+
+@media (max-width: 700px) {
+
+  .employee-info {
+    grid-template-columns: 1fr;
+  }
+
+  .info-item.highlight {
+    grid-column: span 1;
+  }
+
+  .details-page {
+    margin: 12px auto;
+  }
+}

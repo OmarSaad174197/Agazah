@@ -1,15 +1,17 @@
 <h2 mat-dialog-title>
-  إضافة موظف
+  {{ dialogTitle }}
 </h2>
+
 
 <mat-dialog-content>
 
   <form
     [formGroup]="form"
-    (ngSubmit)="save()">
+    (ngSubmit)="save()"
+    class="employee-form">
 
-    <mat-form-field
-      appearance="outline">
+
+    <mat-form-field appearance="outline">
 
       <mat-label>
         رقم الموظف
@@ -26,24 +28,28 @@
         &&
         form.controls.employeeNumber.touched
       ) {
+
         <mat-error>
           رقم الموظف مطلوب
         </mat-error>
+
       }
+
 
       @if (
         form.controls.employeeNumber.hasError('maxlength')
       ) {
+
         <mat-error>
-          الحد الأقصى لرقم الموظف 20 حرفًا
+          رقم الموظف يجب ألا يتجاوز 20 حرفًا
         </mat-error>
+
       }
 
     </mat-form-field>
 
 
-    <mat-form-field
-      appearance="outline">
+    <mat-form-field appearance="outline">
 
       <mat-label>
         اسم الموظف
@@ -60,24 +66,28 @@
         &&
         form.controls.employeeName.touched
       ) {
+
         <mat-error>
           اسم الموظف مطلوب
         </mat-error>
+
       }
+
 
       @if (
         form.controls.employeeName.hasError('maxlength')
       ) {
+
         <mat-error>
-          الحد الأقصى لاسم الموظف 100 حرف
+          اسم الموظف يجب ألا يتجاوز 100 حرف
         </mat-error>
+
       }
 
     </mat-form-field>
 
 
-    <mat-form-field
-      appearance="outline">
+    <mat-form-field appearance="outline">
 
       <mat-label>
         تاريخ الميلاد
@@ -85,8 +95,8 @@
 
       <input
         matInput
-        [max]="maxBirthDate"
         [matDatepicker]="picker"
+        [max]="maxBirthDate"
         formControlName="birthDate"
         placeholder="اختر تاريخ الميلاد">
 
@@ -99,37 +109,23 @@
         #picker>
       </mat-datepicker>
 
+
       @if (
         form.controls.birthDate.hasError('required')
         &&
         form.controls.birthDate.touched
       ) {
+
         <mat-error>
           تاريخ الميلاد مطلوب
         </mat-error>
-      }
 
-      @if (
-        form.controls.birthDate.hasError('matDatepickerMax')
-      ) {
-        <mat-error>
-          لا يمكن اختيار تاريخ في المستقبل
-        </mat-error>
-      }
-
-      @if (
-        form.controls.birthDate.hasError('futureDate')
-      ) {
-        <mat-error>
-          لا يمكن أن يكون تاريخ الميلاد في المستقبل
-        </mat-error>
       }
 
     </mat-form-field>
 
 
-    <mat-form-field
-      appearance="outline">
+    <mat-form-field appearance="outline">
 
       <mat-label>
         المؤهل
@@ -160,14 +156,17 @@
 
       </mat-select>
 
+
       @if (
         form.controls.qualification.hasError('required')
-        &&
-        form.controls.qualification.touched
+        ||
+        form.controls.qualification.hasError('min')
       ) {
+
         <mat-error>
-          المؤهل مطلوب
+          يجب اختيار المؤهل
         </mat-error>
+
       }
 
     </mat-form-field>
@@ -177,8 +176,7 @@
 </mat-dialog-content>
 
 
-<mat-dialog-actions
-  align="end">
+<mat-dialog-actions align="end">
 
   <button
     mat-button
@@ -194,16 +192,17 @@
   <button
     mat-raised-button
     type="button"
-    [disabled]="isSaving || form.invalid"
+    [disabled]="form.invalid || isSaving"
     (click)="save()">
 
     @if (isSaving) {
 
       جاري الحفظ...
 
-    } @else {
+    }
+    @else {
 
-      حفظ
+      {{ isEditMode ? 'حفظ التعديلات' : 'حفظ' }}
 
     }
 

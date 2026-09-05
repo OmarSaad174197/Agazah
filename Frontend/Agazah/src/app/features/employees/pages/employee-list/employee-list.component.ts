@@ -129,6 +129,44 @@ export class EmployeeListComponent
     this.loadEmployees();
   }
 
+    openEditDialog(
+      employee: Employee
+    ): void {
+
+      this.employeeService
+        .getById(employee.id)
+        .subscribe({
+
+        next: employeeDetails => {
+
+          const dialogRef =
+            this.dialog.open(
+              EmployeeFormDialogComponent,
+              {
+                width: '700px',
+                maxWidth: '95vw',
+                data: {
+                  mode: 'edit',
+                  employee: employeeDetails
+                }
+              }
+            );
+
+          dialogRef.afterClosed()
+            .subscribe(result => {
+
+              if (result === true) {
+
+                this.loadEmployees();
+
+              }
+
+            });
+        }
+
+      });
+  }
+
   openCreateDialog(): void {
 
     const dialogRef =

@@ -1,5 +1,6 @@
 import {
   Component,
+  Inject,
   inject
 } from '@angular/core';
 
@@ -10,28 +11,41 @@ import {
 } from '@angular/forms';
 
 import {
+  MAT_DIALOG_DATA,
   MatDialogRef
 } from '@angular/material/dialog';
+
+import {
+  MatSnackBar
+} from '@angular/material/snack-bar';
 
 import {
   MATERIAL_MODULES
 } from '../../../../shared/material/material.imports';
 
 import {
-  Qualification
-} from '../../../../shared/enums/qualification.enum';
+  EmployeeService
+} from '../../services/employee.service';
+
+import {
+  EmployeeDetails
+} from '../../models/employee-details.model';
 
 import {
   CreateEmployee
 } from '../../models/create-employee.model';
 
 import {
-  EmployeeService
-} from '../../services/employee.service';
+  UpdateEmployee
+} from '../../models/update-employee.model';
 
-import {
-  NotificationService
-} from '../../../../core/services/notification.service';
+
+export interface EmployeeFormDialogData {
+  mode: 'create' | 'edit';
+
+  employee?: EmployeeDetails;
+}
+
 
 @Component({
   selector: 'app-employee-form-dialog',
@@ -57,91 +71,102 @@ export class EmployeeFormDialogComponent {
   private readonly employeeService =
     inject(EmployeeService);
 
-  private readonly notificationService =
-    inject(NotificationService);
+  private readonly snackBar =
+    inject(MatSnackBar);
 
   private readonly dialogRef =
     inject(
-      MatDialogRef<
-        EmployeeFormDialogComponent,
-        boolean
-      >
+      MatDialogRef<EmployeeFormDialogComponent>
     );
 
-  readonly qualifications =
-    [
-      Qualification.HighSchool,
-      Qualification.Diploma,
-      Qualification.Bachelor,
-      Qualification.Master,
-      Qualification.PhD
-    ];
-
-  readonly maxBirthDate =
-    new Date();
+  constructor(
+    @Inject(MAT_DIALOG_DATA)
+    public readonly data: EmployeeFormDialogData
+  ) {}
 
   isSaving = false;
 
-  form = this.fb.nonNullable.group({
+  readonly maxBirthDate = new Date();
 
-    employeeNumber: [
-      '',
-      [
-        Validators.required,
-        Validators.maxLength(20)
+  readonly form =
+    this.fb.nonNullable.group({
+
+      employeeNumber: [
+        '',
+        [
+          Validators.required,
+          Validators.maxLength(20)
+        ]
+      ],
+
+      employeeName: [
+        '',
+        [
+          Validators.required,
+          Validators.maxLength(100)
+        ]
+      ],
+
+      birthDate: [
+        null as Date | null,
+        [
+          Validators.required
+        ]
+      ],
+
+      qualification: [
+        0,
+        [
+          Validators.required,
+          Validators.min(1),
+          Validators.max(5)
+        ]
       ]
-    ],
 
-    employeeName: [
-      '',
-      [
-        Validators.required,
-        Validators.maxLength(100)
-      ]
-    ],
+    });
 
-    birthDate: [
-      null,
-      [
-        Validators.required
-      ]
-    ],
 
-    qualification: [
-      null,
-      [
-        Validators.required,
-        Validators.min(1),
-        Validators.max(5)
-      ]
-    ]
-  });
+  get isEditMode(): boolean {
 
-  getQualificationName(
-    value: Qualification
-  ): string {
-
-    switch (value) {
-
-      case Qualification.HighSchool:
-        return 'ثانوية عامة';
-
-      case Qualification.Diploma:
-        return 'دبلوم';
-
-      case Qualification.Bachelor:
-        return 'بكالوريوس';
-
-      case Qualification.Master:
-        return 'ماجستير';
-
-      case Qualification.PhD:
-        return 'دكتوراه';
-
-      default:
-        return '';
-    }
+    return this.data.mode === 'edit';
   }
+
+
+  get dialogTitle(): string {
+
+    return this.isEditMode
+      ? 'تعديل بيانات الموظف'
+      : 'إضافة موظف';
+  }
+
+
+  ngOnInit(): void {
+
+    if (!this.isEditMode || !this.data.employee) {
+
+      return;
+    }
+
+    const employee =
+      this.data.employee;
+
+    this.form.patchValue({
+
+      employeeNumber:
+        employee.employeeNumber,
+
+      employeeName:
+        employee.employeeName,
+
+      birthDate:
+        new Date(employee.birthDate),
+
+      qualification:
+        employee.qualification
+
+    });
+  }
+
 
   save(): void {
 
@@ -156,73 +181,43 @@ export class EmployeeFormDialogComponent {
       return;
     }
 
-    const rawValue =
+    const formValue =
       this.form.getRawValue();
 
-    const employeeName =
-      rawValue.employeeName.trim();
+    if (this.isEditMode) {
 
-    const employeeNumber =
-      rawValue.employeeNumber.trim();
-
-    if (!employeeName) {
-
-      this.form.controls.employeeName
-        .setErrors({
-          required: true
-        });
-
-      this.form.controls.employeeName
-        .markAsTouched();
+      this.updateEmployee(formValue);
 
       return;
     }
 
-    if (!employeeNumber) {
+    this.createEmployee(formValue);
+  }
 
-      this.form.controls.employeeNumber
-        .setErrors({
-          required: true
-        });
 
-      this.form.controls.employeeNumber
-        .markAsTouched();
-
-      return;
+  private createEmployee(
+    formValue: {
+      employeeNumber: string;
+      employeeName: string;
+      birthDate: Date | null;
+      qualification: number;
     }
-
-    const birthDate =
-      rawValue.birthDate as Date | null;
-
-    if (!birthDate) {
-
-      return;
-    }
-
-    if (birthDate > this.maxBirthDate) {
-
-      this.form.controls.birthDate
-        .setErrors({
-          futureDate: true
-        });
-
-      this.form.controls.birthDate
-        .markAsTouched();
-
-      return;
-    }
+  ): void {
 
     const dto: CreateEmployee = {
 
-      employeeNumber,
+      employeeNumber:
+        formValue.employeeNumber.trim(),
 
-      employeeName,
+      employeeName:
+        formValue.employeeName.trim(),
 
       birthDate:
-        birthDate.toISOString(),
+        formValue.birthDate!.toISOString().split('T')[0],
 
       qualification:
-        rawValue.qualification as unknown as Qualification
+        formValue.qualification
+
     };
 
     this.isSaving = true;
@@ -235,8 +230,12 @@ export class EmployeeFormDialogComponent {
 
           this.isSaving = false;
 
-          this.notificationService.success(
-            'تمت إضافة الموظف بنجاح.'
+          this.snackBar.open(
+            'تمت إضافة الموظف بنجاح',
+            'إغلاق',
+            {
+              duration: 3000
+            }
           );
 
           this.dialogRef.close(true);
@@ -245,13 +244,70 @@ export class EmployeeFormDialogComponent {
         error: () => {
 
           this.isSaving = false;
-
-          // رسالة الخطأ يعرضها الـ HTTP Interceptor.
-          // يظل الـ Dialog مفتوحاً حتى يستطيع
-          // المستخدم تصحيح البيانات.
         }
+
       });
   }
+
+
+  private updateEmployee(
+    formValue: {
+      employeeNumber: string;
+      employeeName: string;
+      birthDate: Date | null;
+      qualification: number;
+    }
+  ): void {
+
+    if (!this.data.employee) {
+      return;
+    }
+
+    const dto: UpdateEmployee = {
+
+      employeeName:
+        formValue.employeeName.trim(),
+
+      birthDate:
+        formValue.birthDate!.toISOString().split('T')[0],
+
+      qualification:
+        formValue.qualification
+
+    };
+
+    this.isSaving = true;
+
+    this.employeeService
+      .update(
+        this.data.employee.id,
+        dto
+      )
+      .subscribe({
+
+        next: () => {
+
+          this.isSaving = false;
+
+          this.snackBar.open(
+            'تم تحديث بيانات الموظف بنجاح',
+            'إغلاق',
+            {
+              duration: 3000
+            }
+          );
+
+          this.dialogRef.close(true);
+        },
+
+        error: () => {
+
+          this.isSaving = false;
+        }
+
+      });
+  }
+
 
   close(): void {
 

@@ -1,24 +1,25 @@
-mat-dialog-content {
-  min-width: 420px;
+.employee-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  min-width: 600px;
   padding-top: 8px;
 }
 
 mat-form-field {
   width: 100%;
-  margin-bottom: 10px;
 }
 
 mat-dialog-actions {
-  padding: 16px 24px;
+  padding: 16px 24px 20px;
+  gap: 8px;
 }
 
-button {
-  min-width: 100px;
-}
+@media (max-width: 700px) {
 
-@media (max-width: 600px) {
-
-  mat-dialog-content {
-    min-width: 0;
+  .employee-form {
+    grid-template-columns: 1fr;
+    min-width: auto;
   }
+
 }

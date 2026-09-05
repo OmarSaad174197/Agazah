@@ -196,21 +196,36 @@
               mat-cell
               *matCellDef="let employee">
 
+                <button
+                      mat-icon-button
+                      type="button"
+                      matTooltip="عرض تفاصيل الموظف"
+                      aria-label="عرض تفاصيل الموظف"
+                      (click)="viewDetails(employee.id)">
+
+                      <mat-icon>
+                        visibility
+                      </mat-icon>
+
+                </button>
+                <button
+                  mat-icon-button
+                  type="button"
+                  matTooltip="تعديل الموظف"
+                  aria-label="تعديل الموظف">
+                  (click) = "openEditDialog(employee)">
+
+                  <mat-icon>
+                    edit
+                  </mat-icon>
+
+                </button>
+
+
               <button
                 mat-icon-button
                 type="button"
-                aria-label="تعديل الموظف">
-
-                <mat-icon>
-                  edit
-                </mat-icon>
-
-              </button>
-
-
-              <button
-                mat-icon-button
-                type="button"
+                matTooltip="حذف الموظف"
                 aria-label="حذف الموظف">
 
                 <mat-icon>
