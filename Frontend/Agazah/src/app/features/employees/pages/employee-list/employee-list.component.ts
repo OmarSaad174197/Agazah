@@ -17,6 +17,14 @@ import {
 } from '@angular/material/dialog';
 
 import {
+  MatSnackBar
+} from '@angular/material/snack-bar';
+
+import {
+  Router
+} from '@angular/router';
+
+import {
   EmployeeService
 } from '../../services/employee.service';
 
@@ -29,12 +37,18 @@ import {
 } from '../../components/employee-form-dialog/employee-form-dialog.component';
 
 import {
+  ConfirmDialogComponent,
+  ConfirmDialogData
+} from '../../../../shared/components/confirm-dialog/confirm-dialog.component';
+
+import {
   MATERIAL_MODULES
 } from '../../../../shared/material/material.imports';
 
 import {
   getQualificationName
 } from '../../../../shared/helpers/qualification.helper';
+
 
 @Component({
   selector: 'app-employee-list',
@@ -61,15 +75,25 @@ export class EmployeeListComponent
   private readonly dialog =
     inject(MatDialog);
 
+  private readonly snackBar =
+    inject(MatSnackBar);
+
+  private readonly router =
+    inject(Router);
+
+
   employees: Employee[] = [];
 
   isLoading = false;
+
+  isDeletingId: number | null = null;
 
   pageNumber = 1;
 
   pageSize = 5;
 
   totalCount = 0;
+
 
   displayedColumns = [
     'employeeNumber',
@@ -79,13 +103,16 @@ export class EmployeeListComponent
     'actions'
   ];
 
+
   getQualificationName =
     getQualificationName;
+
 
   ngOnInit(): void {
 
     this.loadEmployees();
   }
+
 
   loadEmployees(): void {
 
@@ -107,14 +134,33 @@ export class EmployeeListComponent
             result.totalCount;
 
           this.isLoading = false;
+
+          this.adjustPageAfterLoad();
         },
 
         error: () => {
 
           this.isLoading = false;
         }
+
       });
   }
+
+
+  private adjustPageAfterLoad(): void {
+
+    if (
+      this.pageNumber > 1 &&
+      this.employees.length === 0 &&
+      this.totalCount > 0
+    ) {
+
+      this.pageNumber--;
+
+      this.loadEmployees();
+    }
+  }
+
 
   onPageChanged(
     event: PageEvent
@@ -129,13 +175,29 @@ export class EmployeeListComponent
     this.loadEmployees();
   }
 
-    openEditDialog(
-      employee: Employee
-    ): void {
 
-      this.employeeService
-        .getById(employee.id)
-        .subscribe({
+  viewDetails(
+    employeeId: number
+  ): void {
+
+    this.router.navigate([
+      '/employees',
+      employeeId
+    ]);
+  }
+
+
+  openEditDialog(
+    employee: Employee
+  ): void {
+
+    if (this.isDeletingId !== null) {
+      return;
+    }
+
+    this.employeeService
+      .getById(employee.id)
+      .subscribe({
 
         next: employeeDetails => {
 
@@ -145,6 +207,8 @@ export class EmployeeListComponent
               {
                 width: '700px',
                 maxWidth: '95vw',
+                disableClose: true,
+
                 data: {
                   mode: 'edit',
                   employee: employeeDetails
@@ -152,13 +216,13 @@ export class EmployeeListComponent
               }
             );
 
-          dialogRef.afterClosed()
+          dialogRef
+            .afterClosed()
             .subscribe(result => {
 
               if (result === true) {
 
                 this.loadEmployees();
-
               }
 
             });
@@ -167,7 +231,12 @@ export class EmployeeListComponent
       });
   }
 
+
   openCreateDialog(): void {
+
+    if (this.isDeletingId !== null) {
+      return;
+    }
 
     const dialogRef =
       this.dialog.open(
@@ -175,7 +244,11 @@ export class EmployeeListComponent
         {
           width: '600px',
           maxWidth: '95vw',
-          disableClose: true
+          disableClose: true,
+
+          data: {
+            mode: 'create'
+          }
         }
       );
 
@@ -190,4 +263,104 @@ export class EmployeeListComponent
         this.loadEmployees();
       });
   }
+
+
+  openDeleteDialog(
+    employee: Employee
+  ): void {
+
+    if (this.isDeletingId !== null) {
+      return;
+    }
+
+    const dialogData:
+      ConfirmDialogData = {
+
+      title:
+        'تأكيد حذف الموظف',
+
+      message:
+        `هل أنت متأكد من حذف الموظف "${employee.employeeName}"؟`,
+
+      confirmText:
+        'حذف',
+
+      cancelText:
+        'إلغاء'
+    };
+
+
+    const dialogRef =
+      this.dialog.open(
+        ConfirmDialogComponent,
+        {
+          width: '450px',
+          maxWidth: '95vw',
+          disableClose: true,
+
+          data: dialogData
+        }
+      );
+
+
+    dialogRef
+      .afterClosed()
+      .subscribe(confirmed => {
+
+        if (!confirmed) {
+          return;
+        }
+
+        this.deleteEmployee(employee);
+      });
+  }
+
+
+  private deleteEmployee(
+    employee: Employee
+  ): void {
+
+    if (this.isDeletingId !== null) {
+      return;
+    }
+
+    this.isDeletingId =
+      employee.id;
+
+
+    this.employeeService
+      .delete(employee.id)
+      .subscribe({
+
+        next: () => {
+
+          this.isDeletingId = null;
+
+          this.snackBar.open(
+            'تم حذف الموظف بنجاح',
+            'إغلاق',
+            {
+              duration: 3000
+            }
+          );
+
+          this.loadEmployees();
+        },
+
+        error: () => {
+
+          this.isDeletingId = null;
+        }
+
+      });
+  }
+
+
+  isDeleting(
+    employeeId: number
+  ): boolean {
+
+    return this.isDeletingId === employeeId;
+  }
+
 }

@@ -23,9 +23,11 @@
         </p>
       </div>
 
+
       <button
         mat-raised-button
         type="button"
+        [disabled]="isLoading || isDeletingId !== null"
         (click)="openCreateDialog()">
 
         <mat-icon>
@@ -67,10 +69,16 @@
           لم تتم إضافة أي موظفين حتى الآن.
         </p>
 
+
         <button
           mat-raised-button
           type="button"
+          [disabled]="isDeletingId !== null"
           (click)="openCreateDialog()">
+
+          <mat-icon>
+            person_add
+          </mat-icon>
 
           إضافة أول موظف
 
@@ -86,6 +94,8 @@
           mat-table
           [dataSource]="employees">
 
+
+          <!-- رقم الموظف -->
 
           <ng-container
             matColumnDef="employeeNumber">
@@ -109,6 +119,8 @@
           </ng-container>
 
 
+          <!-- اسم الموظف -->
+
           <ng-container
             matColumnDef="employeeName">
 
@@ -130,6 +142,8 @@
 
           </ng-container>
 
+
+          <!-- المؤهل -->
 
           <ng-container
             matColumnDef="qualification">
@@ -157,6 +171,8 @@
           </ng-container>
 
 
+          <!-- إجمالي الإجازات -->
+
           <ng-container
             matColumnDef="totalVacationDays">
 
@@ -181,6 +197,8 @@
           </ng-container>
 
 
+          <!-- الإجراءات -->
+
           <ng-container
             matColumnDef="actions">
 
@@ -192,47 +210,72 @@
 
             </th>
 
+
             <td
               mat-cell
               *matCellDef="let employee">
 
-                <button
-                      mat-icon-button
-                      type="button"
-                      matTooltip="عرض تفاصيل الموظف"
-                      aria-label="عرض تفاصيل الموظف"
-                      (click)="viewDetails(employee.id)">
 
-                      <mat-icon>
-                        visibility
-                      </mat-icon>
+              <!-- عرض التفاصيل -->
 
-                </button>
-                <button
-                  mat-icon-button
-                  type="button"
-                  matTooltip="تعديل الموظف"
-                  aria-label="تعديل الموظف">
-                  (click) = "openEditDialog(employee)">
+              <button
+                mat-icon-button
+                type="button"
+                matTooltip="عرض تفاصيل الموظف"
+                aria-label="عرض تفاصيل الموظف"
+                [disabled]="isLoading || isDeletingId !== null"
+                (click)="viewDetails(employee.id)">
 
-                  <mat-icon>
-                    edit
-                  </mat-icon>
+                <mat-icon>
+                  visibility
+                </mat-icon>
 
-                </button>
+              </button>
 
+
+              <!-- تعديل -->
+
+              <button
+                mat-icon-button
+                type="button"
+                matTooltip="تعديل الموظف"
+                aria-label="تعديل الموظف"
+                [disabled]="isLoading || isDeletingId !== null"
+                (click)="openEditDialog(employee)">
+
+                <mat-icon>
+                  edit
+                </mat-icon>
+
+              </button>
+
+
+              <!-- حذف -->
 
               <button
                 mat-icon-button
                 type="button"
                 matTooltip="حذف الموظف"
-                aria-label="حذف الموظف">
+                aria-label="حذف الموظف"
+                [disabled]="isLoading || isDeletingId !== null"
+                (click)="openDeleteDialog(employee)">
 
-                <mat-icon>
-                  delete
-                </mat-icon>
+                @if (isDeleting(employee.id)) {
+
+                  <mat-spinner
+                    diameter="20">
+                  </mat-spinner>
+
+                } @else {
+
+                  <mat-icon>
+                    delete
+                  </mat-icon>
+
+                }
 
               </button>
+
 
             </td>
 
