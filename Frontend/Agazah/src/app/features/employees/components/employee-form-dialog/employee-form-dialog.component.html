@@ -23,6 +23,14 @@
         formControlName="employeeNumber"
         autocomplete="off">
 
+      @if (isEditMode) {
+
+        <mat-hint>
+          لا يمكن تعديل رقم الموظف بعد الإنشاء
+        </mat-hint>
+
+      }
+
       @if (
         form.controls.employeeNumber.hasError('required')
         &&
@@ -41,7 +49,18 @@
       ) {
 
         <mat-error>
-          رقم الموظف يجب ألا يتجاوز 20 حرفًا
+          رقم الموظف يجب ألا يتجاوز 50 حرفًا
+        </mat-error>
+
+      }
+
+
+      @if (
+        form.controls.employeeNumber.hasError('blank')
+      ) {
+
+        <mat-error>
+          رقم الموظف لا يمكن أن يكون فارغًا
         </mat-error>
 
       }
@@ -79,7 +98,18 @@
       ) {
 
         <mat-error>
-          اسم الموظف يجب ألا يتجاوز 100 حرف
+          اسم الموظف يجب ألا يتجاوز 200 حرف
+        </mat-error>
+
+      }
+
+
+      @if (
+        form.controls.employeeName.hasError('blank')
+      ) {
+
+        <mat-error>
+          اسم الموظف لا يمكن أن يكون فارغًا
         </mat-error>
 
       }
@@ -134,25 +164,16 @@
       <mat-select
         formControlName="qualification">
 
-        <mat-option [value]="1">
-          ثانوية عامة
-        </mat-option>
+        @for (
+          qualification of qualifications;
+          track qualification.value
+        ) {
 
-        <mat-option [value]="2">
-          دبلوم
-        </mat-option>
+          <mat-option [value]="qualification.value">
+            {{ qualification.label }}
+          </mat-option>
 
-        <mat-option [value]="3">
-          بكالوريوس
-        </mat-option>
-
-        <mat-option [value]="4">
-          ماجستير
-        </mat-option>
-
-        <mat-option [value]="5">
-          دكتوراه
-        </mat-option>
+        }
 
       </mat-select>
 

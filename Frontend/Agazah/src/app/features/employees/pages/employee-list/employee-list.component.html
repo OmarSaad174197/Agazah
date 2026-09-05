@@ -27,7 +27,7 @@
       <button
         mat-raised-button
         type="button"
-        [disabled]="isLoading || isDeletingId !== null"
+        [disabled]="isActionDisabled()"
         (click)="openCreateDialog()">
 
         <mat-icon>
@@ -73,7 +73,7 @@
         <button
           mat-raised-button
           type="button"
-          [disabled]="isDeletingId !== null"
+           [disabled]="isActionDisabled()"
           (click)="openCreateDialog()">
 
           <mat-icon>
@@ -170,9 +170,6 @@
 
           </ng-container>
 
-
-          <!-- إجمالي الإجازات -->
-
           <ng-container
             matColumnDef="totalVacationDays">
 
@@ -196,9 +193,6 @@
 
           </ng-container>
 
-
-          <!-- الإجراءات -->
-
           <ng-container
             matColumnDef="actions">
 
@@ -215,15 +209,12 @@
               mat-cell
               *matCellDef="let employee">
 
-
-              <!-- عرض التفاصيل -->
-
               <button
                 mat-icon-button
                 type="button"
                 matTooltip="عرض تفاصيل الموظف"
                 aria-label="عرض تفاصيل الموظف"
-                [disabled]="isLoading || isDeletingId !== null"
+                [disabled]="isActionDisabled()"
                 (click)="viewDetails(employee.id)">
 
                 <mat-icon>
@@ -233,31 +224,38 @@
               </button>
 
 
-              <!-- تعديل -->
-
               <button
                 mat-icon-button
                 type="button"
                 matTooltip="تعديل الموظف"
                 aria-label="تعديل الموظف"
-                [disabled]="isLoading || isDeletingId !== null"
+                [disabled]="isActionDisabled()"
                 (click)="openEditDialog(employee)">
 
-                <mat-icon>
-                  edit
-                </mat-icon>
+                @if (isOpeningEdit(employee.id)) {
+
+                  <mat-spinner
+                    diameter="20">
+                  </mat-spinner>
+
+                } @else {
+
+                  <mat-icon>
+                    edit
+                  </mat-icon>
+
+                }
 
               </button>
 
 
-              <!-- حذف -->
 
               <button
                 mat-icon-button
                 type="button"
                 matTooltip="حذف الموظف"
                 aria-label="حذف الموظف"
-                [disabled]="isLoading || isDeletingId !== null"
+                [disabled]="isActionDisabled()"
                 (click)="openDeleteDialog(employee)">
 
                 @if (isDeleting(employee.id)) {

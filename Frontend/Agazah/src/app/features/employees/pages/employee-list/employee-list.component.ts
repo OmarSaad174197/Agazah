@@ -9,16 +9,16 @@ import {
 } from '@angular/common';
 
 import {
+  HttpErrorResponse
+} from '@angular/common/http';
+
+import {
   PageEvent
 } from '@angular/material/paginator';
 
 import {
   MatDialog
 } from '@angular/material/dialog';
-
-import {
-  MatSnackBar
-} from '@angular/material/snack-bar';
 
 import {
   Router
@@ -49,6 +49,10 @@ import {
   getQualificationName
 } from '../../../../shared/helpers/qualification.helper';
 
+import {
+  NotificationService
+} from '../../../../core/services/notification.service';
+
 
 @Component({
   selector: 'app-employee-list',
@@ -75,11 +79,11 @@ export class EmployeeListComponent
   private readonly dialog =
     inject(MatDialog);
 
-  private readonly snackBar =
-    inject(MatSnackBar);
-
   private readonly router =
     inject(Router);
+
+  private readonly notificationService =
+    inject(NotificationService);
 
 
   employees: Employee[] = [];
@@ -87,6 +91,8 @@ export class EmployeeListComponent
   isLoading = false;
 
   isDeletingId: number | null = null;
+
+  isLoadingEditId: number | null = null;
 
   pageNumber = 1;
 
@@ -191,15 +197,20 @@ export class EmployeeListComponent
     employee: Employee
   ): void {
 
-    if (this.isDeletingId !== null) {
+    if (this.isActionDisabled()) {
       return;
     }
+
+    this.isLoadingEditId =
+      employee.id;
 
     this.employeeService
       .getById(employee.id)
       .subscribe({
 
         next: employeeDetails => {
+
+          this.isLoadingEditId = null;
 
           const dialogRef =
             this.dialog.open(
@@ -226,6 +237,11 @@ export class EmployeeListComponent
               }
 
             });
+        },
+
+        error: () => {
+
+          this.isLoadingEditId = null;
         }
 
       });
@@ -234,7 +250,7 @@ export class EmployeeListComponent
 
   openCreateDialog(): void {
 
-    if (this.isDeletingId !== null) {
+    if (this.isActionDisabled()) {
       return;
     }
 
@@ -269,7 +285,7 @@ export class EmployeeListComponent
     employee: Employee
   ): void {
 
-    if (this.isDeletingId !== null) {
+    if (this.isActionDisabled()) {
       return;
     }
 
@@ -336,20 +352,21 @@ export class EmployeeListComponent
 
           this.isDeletingId = null;
 
-          this.snackBar.open(
-            'تم حذف الموظف بنجاح',
-            'إغلاق',
-            {
-              duration: 3000
-            }
+          this.notificationService.success(
+            'تم حذف الموظف بنجاح'
           );
 
           this.loadEmployees();
         },
 
-        error: () => {
+        error: (error: HttpErrorResponse) => {
 
           this.isDeletingId = null;
+
+          if (error.status === 404) {
+
+            this.loadEmployees();
+          }
         }
 
       });
@@ -361,6 +378,22 @@ export class EmployeeListComponent
   ): boolean {
 
     return this.isDeletingId === employeeId;
+  }
+
+
+  isOpeningEdit(
+    employeeId: number
+  ): boolean {
+
+    return this.isLoadingEditId === employeeId;
+  }
+
+
+  isActionDisabled(): boolean {
+
+    return this.isLoading ||
+      this.isDeletingId !== null ||
+      this.isLoadingEditId !== null;
   }
 
 }
