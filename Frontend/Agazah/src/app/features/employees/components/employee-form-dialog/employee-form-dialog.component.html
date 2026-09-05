@@ -1,0 +1,232 @@
+<h2 mat-dialog-title>
+  {{ dialogTitle }}
+</h2>
+
+
+<mat-dialog-content>
+
+  <form
+    [formGroup]="form"
+    (ngSubmit)="save()"
+    class="employee-form">
+
+
+    <mat-form-field appearance="outline">
+
+      <mat-label>
+        رقم الموظف
+      </mat-label>
+
+      <input
+        matInput
+        type="text"
+        formControlName="employeeNumber"
+        autocomplete="off">
+
+      @if (isEditMode) {
+
+        <mat-hint>
+          لا يمكن تعديل رقم الموظف بعد الإنشاء
+        </mat-hint>
+
+      }
+
+      @if (
+        form.controls.employeeNumber.hasError('required')
+        &&
+        form.controls.employeeNumber.touched
+      ) {
+
+        <mat-error>
+          رقم الموظف مطلوب
+        </mat-error>
+
+      }
+
+
+      @if (
+        form.controls.employeeNumber.hasError('maxlength')
+      ) {
+
+        <mat-error>
+          رقم الموظف يجب ألا يتجاوز 50 حرفًا
+        </mat-error>
+
+      }
+
+
+      @if (
+        form.controls.employeeNumber.hasError('blank')
+      ) {
+
+        <mat-error>
+          رقم الموظف لا يمكن أن يكون فارغًا
+        </mat-error>
+
+      }
+
+    </mat-form-field>
+
+
+    <mat-form-field appearance="outline">
+
+      <mat-label>
+        اسم الموظف
+      </mat-label>
+
+      <input
+        matInput
+        type="text"
+        formControlName="employeeName"
+        autocomplete="off">
+
+      @if (
+        form.controls.employeeName.hasError('required')
+        &&
+        form.controls.employeeName.touched
+      ) {
+
+        <mat-error>
+          اسم الموظف مطلوب
+        </mat-error>
+
+      }
+
+
+      @if (
+        form.controls.employeeName.hasError('maxlength')
+      ) {
+
+        <mat-error>
+          اسم الموظف يجب ألا يتجاوز 200 حرف
+        </mat-error>
+
+      }
+
+
+      @if (
+        form.controls.employeeName.hasError('blank')
+      ) {
+
+        <mat-error>
+          اسم الموظف لا يمكن أن يكون فارغًا
+        </mat-error>
+
+      }
+
+    </mat-form-field>
+
+
+    <mat-form-field appearance="outline">
+
+      <mat-label>
+        تاريخ الميلاد
+      </mat-label>
+
+      <input
+        matInput
+        [matDatepicker]="picker"
+        [max]="maxBirthDate"
+        formControlName="birthDate"
+        placeholder="اختر تاريخ الميلاد">
+
+      <mat-datepicker-toggle
+        matIconSuffix
+        [for]="picker">
+      </mat-datepicker-toggle>
+
+      <mat-datepicker
+        #picker>
+      </mat-datepicker>
+
+
+      @if (
+        form.controls.birthDate.hasError('required')
+        &&
+        form.controls.birthDate.touched
+      ) {
+
+        <mat-error>
+          تاريخ الميلاد مطلوب
+        </mat-error>
+
+      }
+
+    </mat-form-field>
+
+
+    <mat-form-field appearance="outline">
+
+      <mat-label>
+        المؤهل
+      </mat-label>
+
+      <mat-select
+        formControlName="qualification">
+
+        @for (
+          qualification of qualifications;
+          track qualification.value
+        ) {
+
+          <mat-option [value]="qualification.value">
+            {{ qualification.label }}
+          </mat-option>
+
+        }
+
+      </mat-select>
+
+
+      @if (
+        form.controls.qualification.hasError('required')
+        ||
+        form.controls.qualification.hasError('min')
+      ) {
+
+        <mat-error>
+          يجب اختيار المؤهل
+        </mat-error>
+
+      }
+
+    </mat-form-field>
+
+  </form>
+
+</mat-dialog-content>
+
+
+<mat-dialog-actions align="end">
+
+  <button
+    mat-button
+    type="button"
+    [disabled]="isSaving"
+    (click)="close()">
+
+    إلغاء
+
+  </button>
+
+
+  <button
+    mat-raised-button
+    type="button"
+    [disabled]="form.invalid || isSaving"
+    (click)="save()">
+
+    @if (isSaving) {
+
+      جاري الحفظ...
+
+    }
+    @else {
+
+      {{ isEditMode ? 'حفظ التعديلات' : 'حفظ' }}
+
+    }
+
+  </button>
+
+</mat-dialog-actions>

@@ -1,3 +1,6 @@
+using Agazah.API.Extensions;
+using Agazah.Application.DependencyInjection;
+using Agazah.Infrastructure.DependencyInjection;
 
 namespace Agazah.API
 {
@@ -13,7 +16,21 @@ namespace Agazah.API
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+            builder.Services.AddApplication();
+            builder.Services.AddInfrastructure(
+                builder.Configuration);
 
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AngularPolicy", policy =>
+                {
+                    policy
+                        .WithOrigins("http://localhost:4200")
+                        .AllowAnyHeader()
+                        .AllowAnyMethod();
+                });
+            });
+            
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -25,8 +42,11 @@ namespace Agazah.API
 
             app.UseHttpsRedirection();
 
-            app.UseAuthorization();
+            app.UseCors("AngularPolicy");
 
+            app.UseGlobalExceptionHandling();
+
+            app.UseAuthorization();
 
             app.MapControllers();
 
