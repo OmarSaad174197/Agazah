@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<RptDataSource xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Name="AgazahDataSource">
+  <ConnectionProperties>
+    <Extension>SQL</Extension>
+    <ConnectString>Server=OMARPC\SQL2016;Database=AgazahDb;User Id=sa;Password=Azka2008;TrustServerCertificate=True;</ConnectString>
+  </ConnectionProperties>
+  <DataSourceID>b3c7c084-209a-482a-9cd9-2cbd39768197</DataSourceID>
+</RptDataSource>

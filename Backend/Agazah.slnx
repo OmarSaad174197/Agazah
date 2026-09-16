@@ -1,6 +1,23 @@
 <Solution>
-  <Project Path="Agazah.API/Agazah.API.csproj" />
-  <Project Path="Agazah.Application/Agazah.Application.csproj" />
-  <Project Path="Agazah.Domain/Agazah.Domain.csproj" />
-  <Project Path="Agazah.Infrastructure/Agazah.Infrastructure.csproj" />
+  <Configurations>
+    <BuildType Name="Debug" />
+    <BuildType Name="DebugLocal" />
+    <BuildType Name="Release" />
+  </Configurations>
+  <Project Path="Agazah.API/Agazah.API.csproj">
+    <BuildType Solution="DebugLocal|*" Project="Debug" />
+  </Project>
+  <Project Path="Agazah.Application/Agazah.Application.csproj">
+    <BuildType Solution="DebugLocal|*" Project="Debug" />
+  </Project>
+  <Project Path="Agazah.Domain/Agazah.Domain.csproj">
+    <BuildType Solution="DebugLocal|*" Project="Debug" />
+  </Project>
+  <Project Path="Agazah.Infrastructure/Agazah.Infrastructure.csproj">
+    <BuildType Solution="DebugLocal|*" Project="Debug" />
+  </Project>
+  <Project Path="Agazah.Reporting/Agazah.Reporting.rptproj">
+    <Deploy Solution="Debug|*" />
+    <Deploy Solution="Release|*" />
+  </Project>
 </Solution>
