@@ -2,6 +2,7 @@ import {
   Routes
 } from '@angular/router';
 
+
 export const routes: Routes = [
 
   {
@@ -9,6 +10,7 @@ export const routes: Routes = [
     redirectTo: 'employees',
     pathMatch: 'full'
   },
+
 
   {
     path: 'employees',
@@ -21,6 +23,7 @@ export const routes: Routes = [
       )
   },
 
+
   {
     path: 'employees/:id',
     loadComponent: () =>
@@ -31,6 +34,19 @@ export const routes: Routes = [
         m => m.EmployeeDetailsComponent
       )
   },
+
+
+  {
+    path: 'reports',
+    loadComponent: () =>
+      import(
+        './features/reports/pages/reports/report.component'
+      )
+      .then(
+        m => m.ReportsComponent
+      )
+  },
+
 
   {
     path: '**',

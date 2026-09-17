@@ -1,0 +1,176 @@
+<div class="page-container">
+
+  <mat-card>
+
+    <mat-card-header>
+
+      <mat-card-title>
+        التقارير
+      </mat-card-title>
+
+    </mat-card-header>
+
+
+    <mat-card-content>
+
+      <div class="page-header">
+
+        <div>
+
+          <h1>
+            تقارير النظام
+          </h1>
+
+          <p>
+            عرض وتصدير التقارير المتاحة
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <mat-card class="report-card">
+
+        <mat-card-header>
+
+          <mat-icon mat-card-avatar>
+            assessment
+          </mat-icon>
+
+          <mat-card-title>
+            تقرير الموظفين
+          </mat-card-title>
+
+          <mat-card-subtitle>
+            عرض بيانات الموظفين في تقرير منسق
+          </mat-card-subtitle>
+
+        </mat-card-header>
+
+
+        <mat-card-content>
+
+          <p class="report-description">
+            يمكنك عرض التقرير مباشرة داخل النظام
+            أو تصديره بصيغة PDF أو Excel.
+          </p>
+
+
+          <div class="report-actions">
+
+            <button
+              mat-raised-button
+              type="button"
+              [disabled]="isLoading"
+              (click)="viewEmployeeReport()">
+
+              <mat-icon>
+                visibility
+              </mat-icon>
+
+              عرض التقرير
+
+            </button>
+
+
+            <button
+              mat-stroked-button
+              type="button"
+              [disabled]="isLoading"
+              (click)="downloadEmployeeReport('PDF')">
+
+              <mat-icon>
+                picture_as_pdf
+              </mat-icon>
+
+              تحميل PDF
+
+            </button>
+
+
+            <button
+              mat-stroked-button
+              type="button"
+              [disabled]="isLoading"
+              (click)="downloadEmployeeReport('EXCEL')">
+
+              <mat-icon>
+                table_view
+              </mat-icon>
+
+              تحميل Excel
+
+            </button>
+
+          </div>
+
+        </mat-card-content>
+
+      </mat-card>
+
+
+      @if (isLoading) {
+
+        <div class="loading-container">
+
+          <mat-spinner></mat-spinner>
+
+          <span>
+            جاري تجهيز التقرير...
+          </span>
+
+        </div>
+
+      }
+
+
+      @if (reportUrl && !isLoading) {
+
+        <mat-card class="preview-card">
+
+          <mat-card-header>
+
+            <mat-card-title>
+              معاينة تقرير الموظفين
+            </mat-card-title>
+
+            <button
+              mat-icon-button
+              type="button"
+              matTooltip="إغلاق المعاينة"
+              aria-label="إغلاق المعاينة"
+              (click)="clearReportPreview()">
+
+              <mat-icon>
+                close
+              </mat-icon>
+
+            </button>
+
+          </mat-card-header>
+
+
+          <mat-card-content>
+
+            <div class="report-viewer">
+
+              <iframe
+                [src]="reportUrl"
+                title="معاينة تقرير الموظفين">
+
+              </iframe>
+
+            </div>
+
+          </mat-card-content>
+
+        </mat-card>
+
+      }
+
+    </mat-card-content>
+
+  </mat-card>
+
+</div>
