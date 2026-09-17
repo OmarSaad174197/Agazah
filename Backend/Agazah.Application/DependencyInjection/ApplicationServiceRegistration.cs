@@ -21,6 +21,9 @@ public static class ApplicationServiceRegistration
 
         services.AddScoped<IVacationService, VacationService>();
 
+        // Add the part which is related to reporting:
+        services.AddScoped<IReportService, ReportService>();
+
         return services;
     }
 }

@@ -1,5 +1,7 @@
+using Agazah.Application.Interfaces.Reports;
 using Agazah.Application.Interfaces.Repositories;
 using Agazah.Infrastructure.Persistence;
+using Agazah.Infrastructure.Reporting;
 using Agazah.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -24,7 +26,19 @@ public static class InfrastructureServiceRegistration
         services.AddScoped<IVacationRepository, VacationRepository>();
 
         services.AddScoped<IUnitOfWork,Agazah.Infrastructure.UnitOfWork.UnitOfWork>();
-        
+
+        // Add the part which is related to reporting:
+
+        services.Configure<SsrsOptions>(
+            configuration.GetSection("SSRS"));
+
+        services.AddHttpClient<ISsrsReportClient, SsrsReportClient>()
+            .ConfigurePrimaryHttpMessageHandler(() =>
+                new HttpClientHandler
+                {
+                    UseDefaultCredentials = true
+                });
+
         return services;
     }
 }
