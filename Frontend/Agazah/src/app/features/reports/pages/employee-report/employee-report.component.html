@@ -1,0 +1,224 @@
+<div class="page-container">
+
+  <mat-card>
+
+    <mat-card-header>
+
+      <mat-card-title>
+        تقرير الموظف
+      </mat-card-title>
+
+    </mat-card-header>
+
+
+    <mat-card-content>
+
+      <div class="page-header">
+
+        <div>
+
+          <h1>
+            تقرير الموظف
+          </h1>
+
+          <p>
+            عرض بيانات الموظف والإجازات المسجلة له
+          </p>
+
+        </div>
+
+
+        <button
+          mat-button
+          type="button"
+          [disabled]="isLoading"
+          (click)="goBack()">
+
+          <mat-icon>
+            arrow_forward
+          </mat-icon>
+
+          العودة إلى الموظفين
+
+        </button>
+
+      </div>
+
+
+      <mat-divider></mat-divider>
+
+
+      <div class="report-section">
+
+        <h2>
+          نوع التقرير
+        </h2>
+
+
+        <div class="engine-selection">
+
+          <button
+            mat-raised-button
+            type="button"
+            [disabled]="isLoading"
+            [class.selected]="
+              selectedEngine === 'Rdl'
+            "
+            (click)="selectEngine('Rdl')">
+
+            <mat-icon>
+              cloud
+            </mat-icon>
+
+            RDL - عبر SSRS
+
+          </button>
+
+
+          <button
+            mat-raised-button
+            type="button"
+            [disabled]="isLoading"
+            [class.selected]="
+              selectedEngine === 'Rdlc'
+            "
+            (click)="selectEngine('Rdlc')">
+
+            <mat-icon>
+              description
+            </mat-icon>
+
+            RDLC - معالجة محلية
+
+          </button>
+
+        </div>
+
+      </div>
+
+
+      <div class="report-section">
+
+        <h2>
+          العمليات
+        </h2>
+
+
+        <div class="report-actions">
+
+          <button
+            mat-raised-button
+            type="button"
+            [disabled]="isLoading"
+            (click)="viewReport()">
+
+            <mat-icon>
+              visibility
+            </mat-icon>
+
+            عرض التقرير
+
+          </button>
+
+
+          <button
+            mat-stroked-button
+            type="button"
+            [disabled]="isLoading"
+            (click)="download('PDF')">
+
+            <mat-icon>
+              picture_as_pdf
+            </mat-icon>
+
+            تحميل PDF
+
+          </button>
+
+
+          <button
+            mat-stroked-button
+            type="button"
+            [disabled]="isLoading"
+            (click)="download('EXCEL')">
+
+            <mat-icon>
+              table_view
+            </mat-icon>
+
+            تحميل Excel
+
+          </button>
+
+        </div>
+
+      </div>
+
+
+      @if (isLoading) {
+
+        <div class="loading-container">
+
+          <mat-spinner></mat-spinner>
+
+          <span>
+            جاري تجهيز التقرير...
+          </span>
+
+        </div>
+
+      }
+
+
+      @if (
+        reportUrl &&
+        !isLoading
+      ) {
+
+        <mat-card class="preview-card">
+
+          <mat-card-header>
+
+            <mat-card-title>
+              معاينة التقرير
+            </mat-card-title>
+
+
+            <button
+              mat-icon-button
+              type="button"
+              matTooltip="إغلاق المعاينة"
+              aria-label="إغلاق المعاينة"
+              (click)="clearPreview()">
+
+              <mat-icon>
+                close
+              </mat-icon>
+
+            </button>
+
+          </mat-card-header>
+
+
+          <mat-card-content>
+
+            <div class="report-viewer">
+
+              <iframe
+                [src]="reportUrl"
+                title="معاينة تقرير الموظف">
+              </iframe>
+
+            </div>
+
+          </mat-card-content>
+
+        </mat-card>
+
+      }
+
+    </mat-card-content>
+
+  </mat-card>
+
+</div>

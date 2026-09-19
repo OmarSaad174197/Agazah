@@ -1,317 +1,377 @@
-<mat-card>
+<div class="page-container">
 
-  <mat-card-header>
+  <mat-card>
 
-    <mat-card-title>
-      إدارة الموظفين
-    </mat-card-title>
+    <mat-card-header>
 
-  </mat-card-header>
+      <mat-card-title>
+        إدارة الموظفين
+      </mat-card-title>
 
-
-  <mat-card-content>
-
-    <div class="page-header">
-
-      <div>
-        <h1>
-          الموظفون
-        </h1>
-
-        <p>
-          إدارة بيانات الموظفين والإجازات
-        </p>
-      </div>
+    </mat-card-header>
 
 
-      <button
-        mat-raised-button
-        type="button"
-        [disabled]="isActionDisabled()"
-        (click)="openCreateDialog()">
+    <mat-card-content>
 
-        <mat-icon>
-          person_add
-        </mat-icon>
+      <div class="page-header">
 
-        إضافة موظف
+        <div>
 
-      </button>
+          <h1>
+            الموظفون
+          </h1>
 
-    </div>
+          <p>
+            إدارة بيانات الموظفين والإجازات
+          </p>
 
-
-    @if (isLoading) {
-
-      <div class="loading-container">
-
-        <mat-spinner></mat-spinner>
-
-        <span>
-          جاري تحميل الموظفين...
-        </span>
-
-      </div>
-
-    } @else if (employees.length === 0) {
-
-      <div class="empty-state">
-
-        <mat-icon>
-          groups
-        </mat-icon>
-
-        <h2>
-          لا يوجد موظفون
-        </h2>
-
-        <p>
-          لم تتم إضافة أي موظفين حتى الآن.
-        </p>
+        </div>
 
 
         <button
           mat-raised-button
           type="button"
-           [disabled]="isActionDisabled()"
+          [disabled]="
+            isLoading ||
+            isDeletingId !== null
+          "
           (click)="openCreateDialog()">
 
           <mat-icon>
             person_add
           </mat-icon>
 
-          إضافة أول موظف
+          إضافة موظف
 
         </button>
 
       </div>
 
-    } @else {
 
-      <div class="table-container">
+      @if (isLoading) {
 
-        <table
-          mat-table
-          [dataSource]="employees">
+        <div class="loading-container">
 
+          <mat-spinner></mat-spinner>
 
-          <!-- رقم الموظف -->
+          <span>
+            جاري تحميل الموظفين...
+          </span>
 
-          <ng-container
-            matColumnDef="employeeNumber">
+        </div>
 
-            <th
-              mat-header-cell
-              *matHeaderCellDef>
-
-              رقم الموظف
-
-            </th>
-
-            <td
-              mat-cell
-              *matCellDef="let employee">
-
-              {{ employee.employeeNumber }}
-
-            </td>
-
-          </ng-container>
+      }
 
 
-          <!-- اسم الموظف -->
+      @else if (employees.length === 0) {
 
-          <ng-container
-            matColumnDef="employeeName">
+        <div class="empty-state">
 
-            <th
-              mat-header-cell
-              *matHeaderCellDef>
+          <mat-icon>
+            groups
+          </mat-icon>
 
-              اسم الموظف
+          <h2>
+            لا يوجد موظفون
+          </h2>
 
-            </th>
-
-            <td
-              mat-cell
-              *matCellDef="let employee">
-
-              {{ employee.employeeName }}
-
-            </td>
-
-          </ng-container>
+          <p>
+            لم تتم إضافة أي موظفين حتى الآن.
+          </p>
 
 
-          <!-- المؤهل -->
+          <button
+            mat-raised-button
+            type="button"
+            [disabled]="
+              isDeletingId !== null
+            "
+            (click)="openCreateDialog()">
 
-          <ng-container
-            matColumnDef="qualification">
+            <mat-icon>
+              person_add
+            </mat-icon>
 
-            <th
-              mat-header-cell
-              *matHeaderCellDef>
+            إضافة أول موظف
 
-              المؤهل
+          </button>
 
-            </th>
+        </div>
 
-            <td
-              mat-cell
-              *matCellDef="let employee">
-
-              {{
-                getQualificationName(
-                  employee.qualification
-                )
-              }}
-
-            </td>
-
-          </ng-container>
-
-          <ng-container
-            matColumnDef="totalVacationDays">
-
-            <th
-              mat-header-cell
-              *matHeaderCellDef>
-
-              إجمالي أيام الإجازات
-
-            </th>
-
-            <td
-              mat-cell
-              *matCellDef="let employee">
-
-              {{ employee.totalVacationDays }}
-
-              يوم
-
-            </td>
-
-          </ng-container>
-
-          <ng-container
-            matColumnDef="actions">
-
-            <th
-              mat-header-cell
-              *matHeaderCellDef>
-
-              الإجراءات
-
-            </th>
+      }
 
 
-            <td
-              mat-cell
-              *matCellDef="let employee">
+      @else {
 
-              <button
-                mat-icon-button
-                type="button"
-                matTooltip="عرض تفاصيل الموظف"
-                aria-label="عرض تفاصيل الموظف"
-                [disabled]="isActionDisabled()"
-                (click)="viewDetails(employee.id)">
+        <div class="table-container">
 
-                <mat-icon>
-                  visibility
-                </mat-icon>
-
-              </button>
+          <table
+            mat-table
+            [dataSource]="employees">
 
 
-              <button
-                mat-icon-button
-                type="button"
-                matTooltip="تعديل الموظف"
-                aria-label="تعديل الموظف"
-                [disabled]="isActionDisabled()"
-                (click)="openEditDialog(employee)">
+            <ng-container
+              matColumnDef="employeeNumber">
 
-                @if (isOpeningEdit(employee.id)) {
+              <th
+                mat-header-cell
+                *matHeaderCellDef>
 
-                  <mat-spinner
-                    diameter="20">
-                  </mat-spinner>
+                رقم الموظف
 
-                } @else {
+              </th>
+
+              <td
+                mat-cell
+                *matCellDef="let employee">
+
+                {{ employee.employeeNumber }}
+
+              </td>
+
+            </ng-container>
+
+
+            <ng-container
+              matColumnDef="employeeName">
+
+              <th
+                mat-header-cell
+                *matHeaderCellDef>
+
+                اسم الموظف
+
+              </th>
+
+              <td
+                mat-cell
+                *matCellDef="let employee">
+
+                {{ employee.employeeName }}
+
+              </td>
+
+            </ng-container>
+
+
+            <ng-container
+              matColumnDef="qualification">
+
+              <th
+                mat-header-cell
+                *matHeaderCellDef>
+
+                المؤهل
+
+              </th>
+
+              <td
+                mat-cell
+                *matCellDef="let employee">
+
+                {{
+                  getQualificationName(
+                    employee.qualification
+                  )
+                }}
+
+              </td>
+
+            </ng-container>
+
+
+            <ng-container
+              matColumnDef="totalVacationDays">
+
+              <th
+                mat-header-cell
+                *matHeaderCellDef>
+
+                إجمالي أيام الإجازات
+
+              </th>
+
+              <td
+                mat-cell
+                *matCellDef="let employee">
+
+                <strong>
+                  {{ employee.totalVacationDays }}
+                </strong>
+
+                يوم
+
+              </td>
+
+            </ng-container>
+
+
+            <ng-container
+              matColumnDef="actions">
+
+              <th
+                mat-header-cell
+                *matHeaderCellDef>
+
+                الإجراءات
+
+              </th>
+
+
+              <td
+                mat-cell
+                *matCellDef="let employee">
+
+
+                <button
+                  mat-icon-button
+                  type="button"
+                  matTooltip="عرض تفاصيل الموظف"
+                  aria-label="عرض تفاصيل الموظف"
+                  [disabled]="
+                    isDeletingId !== null
+                  "
+                  (click)="
+                    viewDetails(employee.id)
+                  ">
+
+                  <mat-icon>
+                    visibility
+                  </mat-icon>
+
+                </button>
+
+
+                <button
+                  mat-icon-button
+                  type="button"
+                  matTooltip="تعديل الموظف"
+                  aria-label="تعديل الموظف"
+                  [disabled]="
+                    isDeletingId !== null
+                  "
+                  (click)="
+                    openEditDialog(employee)
+                  ">
 
                   <mat-icon>
                     edit
                   </mat-icon>
 
-                }
-
-              </button>
+                </button>
 
 
+                <button
+                  mat-icon-button
+                  type="button"
+                  matTooltip="حذف الموظف"
+                  aria-label="حذف الموظف"
+                  [disabled]="
+                    isDeletingId !== null
+                  "
+                  (click)="
+                    openDeleteDialog(employee)
+                  ">
 
-              <button
-                mat-icon-button
-                type="button"
-                matTooltip="حذف الموظف"
-                aria-label="حذف الموظف"
-                [disabled]="isActionDisabled()"
-                (click)="openDeleteDialog(employee)">
+                  @if (
+                    isDeleting(employee.id)
+                  ) {
 
-                @if (isDeleting(employee.id)) {
+                    <mat-spinner
+                      diameter="20">
+                    </mat-spinner>
 
-                  <mat-spinner
-                    diameter="20">
-                  </mat-spinner>
+                  }
+                  @else {
 
-                } @else {
+                    <mat-icon>
+                      delete
+                    </mat-icon>
+
+                  }
+
+                </button>
+
+              </td>
+
+            </ng-container>
+
+
+            <ng-container
+              matColumnDef="report">
+
+              <th
+                mat-header-cell
+                *matHeaderCellDef>
+
+                التقارير
+
+              </th>
+
+
+              <td
+                mat-cell
+                *matCellDef="let employee">
+
+                <button
+                  mat-icon-button
+                  type="button"
+                  matTooltip="عرض تقارير الموظف"
+                  aria-label="عرض تقارير الموظف"
+                  [disabled]="
+                    isLoading ||
+                    isDeletingId !== null
+                  "
+                  [routerLink]="[
+                    '/reports/employee',
+                    employee.id
+                  ]">
 
                   <mat-icon>
-                    delete
+                    assessment
                   </mat-icon>
 
-                }
+                </button>
 
-              </button>
+              </td>
 
-
-            </td>
-
-          </ng-container>
+            </ng-container>
 
 
-          <tr
-            mat-header-row
-            *matHeaderRowDef="displayedColumns">
-
-          </tr>
-
-
-          <tr
-            mat-row
-            *matRowDef="
-              let row;
-              columns: displayedColumns;
-            ">
-
-          </tr>
-
-        </table>
-
-      </div>
+            <tr
+              mat-header-row
+              *matHeaderRowDef="
+                displayedColumns
+              ">
+            </tr>
 
 
-      <mat-paginator
-        [length]="totalCount"
-        [pageSize]="pageSize"
-        [pageIndex]="pageNumber - 1"
-        [pageSizeOptions]="[5, 10, 20]"
-        (page)="onPageChanged($event)">
+            <tr
+              mat-row
+              *matRowDef="
+                let row;
+                columns: displayedColumns;
+              ">
+            </tr>
 
-      </mat-paginator>
+          </table>
 
-    }
+        </div>
 
-  </mat-card-content>
 
-</mat-card>
+        <mat-paginator
+          [length]="totalCount"
+          [pageSize]="pageSize"
+          [pageIndex]="pageNumber - 1"
+          [pageSizeOptions]="[5, 10, 20]"
+          (page)="onPageChanged($event)">
+
+        </mat-paginator>
+
+      }
+
+    </mat-card-content>
+
+  </mat-card>
+
+</div>

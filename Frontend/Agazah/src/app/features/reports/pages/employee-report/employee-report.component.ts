@@ -1,6 +1,7 @@
 import {
   Component,
   OnDestroy,
+  OnInit,
   inject
 } from '@angular/core';
 
@@ -11,6 +12,11 @@ import {
 import {
   PLATFORM_ID
 } from '@angular/core';
+
+import {
+  ActivatedRoute,
+  Router
+} from '@angular/router';
 
 import {
   DomSanitizer,
@@ -26,6 +32,10 @@ import {
 } from '../../services/report.service';
 
 import {
+  ReportEngine
+} from '../../models/report-engine.type';
+
+import {
   ReportFormat
 } from '../../models/report-format.type';
 
@@ -35,7 +45,7 @@ import {
 
 
 @Component({
-  selector: 'app-reports',
+  selector: 'app-employee-report',
 
   standalone: true,
 
@@ -44,13 +54,19 @@ import {
   ],
 
   templateUrl:
-    './report.component.html',
+    './employee-report.component.html',
 
   styleUrl:
-    './report.component.css'
+    './employee-report.component.css'
 })
-export class ReportsComponent
-  implements OnDestroy {
+export class EmployeeReportComponent
+  implements OnInit, OnDestroy {
+
+  private readonly route =
+    inject(ActivatedRoute);
+
+  private readonly router =
+    inject(Router);
 
   private readonly reportService =
     inject(ReportService);
@@ -62,19 +78,66 @@ export class ReportsComponent
     inject(PLATFORM_ID);
 
 
+  employeeId = 0;
+
+  selectedEngine:
+    ReportEngine = 'Rdl';
+
+
   isLoading = false;
 
+
   reportUrl:
-    SafeResourceUrl | null =
-    null;
+    SafeResourceUrl | null = null;
 
 
-  private reportObjectUrl:
-    string | null =
-    null;
+  private objectUrl:
+    string | null = null;
 
 
-  viewEmployeeReport(): void {
+  ngOnInit(): void {
+
+    const id =
+      Number(
+        this.route.snapshot.paramMap.get(
+          'employeeId'
+        )
+      );
+
+
+    if (
+      !Number.isInteger(id) ||
+      id <= 0
+    ) {
+
+      this.goBack();
+
+      return;
+    }
+
+
+    this.employeeId = id;
+  }
+
+
+  selectEngine(
+    engine: ReportEngine
+  ): void {
+
+    if (this.isLoading) {
+      return;
+    }
+
+
+    this.selectedEngine =
+      engine;
+
+
+    this.clearPreview();
+  }
+
+
+  viewReport(): void {
 
     if (
       !isPlatformBrowser(
@@ -85,13 +148,17 @@ export class ReportsComponent
     }
 
 
-    this.clearReportPreview();
+    this.clearPreview();
 
     this.isLoading = true;
 
 
     this.reportService
-      .getEmployeeReport('PDF')
+      .getEmployeeReport(
+        this.employeeId,
+        this.selectedEngine,
+        'PDF'
+      )
       .pipe(
         finalize(() => {
 
@@ -102,7 +169,7 @@ export class ReportsComponent
 
         next: blob => {
 
-          this.reportObjectUrl =
+          this.objectUrl =
             URL.createObjectURL(
               blob
             );
@@ -111,17 +178,19 @@ export class ReportsComponent
           this.reportUrl =
             this.sanitizer
               .bypassSecurityTrustResourceUrl(
-                this.reportObjectUrl
+                this.objectUrl
               );
         },
 
         error: () => {
+
+          // يتم عرض الخطأ بواسطة interceptor.
         }
       });
   }
 
 
-  downloadEmployeeReport(
+  download(
     format: ReportFormat
   ): void {
 
@@ -138,7 +207,11 @@ export class ReportsComponent
 
 
     this.reportService
-      .getEmployeeReport(format)
+      .getEmployeeReport(
+        this.employeeId,
+        this.selectedEngine,
+        format
+      )
       .pipe(
         finalize(() => {
 
@@ -155,53 +228,59 @@ export class ReportsComponent
               : 'xlsx';
 
 
+          const engineName =
+            this.selectedEngine === 'Rdl'
+              ? 'RDL'
+              : 'RDLC';
+
+
           const fileName =
-            `تقرير-الموظفين.${extension}`;
+            `تقرير-الموظف-${this.employeeId}-${engineName}.${extension}`;
 
 
-          const objectUrl =
-            URL.createObjectURL(
-              blob
-            );
+          const url =
+            URL.createObjectURL(blob);
 
 
           const anchor =
-            document.createElement(
-              'a'
-            );
+            document.createElement('a');
 
 
           anchor.href =
-            objectUrl;
+            url;
 
           anchor.download =
             fileName;
 
+
+          document.body
+            .appendChild(anchor);
+
           anchor.click();
 
+          anchor.remove();
 
-          URL.revokeObjectURL(
-            objectUrl
-          );
+
+          URL.revokeObjectURL(url);
         },
 
         error: () => {
 
-          // الخطأ يعرضه الـInterceptor.
+          // يتم عرض الخطأ بواسطة interceptor.
         }
       });
   }
 
 
-  clearReportPreview(): void {
+  clearPreview(): void {
 
-    if (this.reportObjectUrl) {
+    if (this.objectUrl) {
 
       URL.revokeObjectURL(
-        this.reportObjectUrl
+        this.objectUrl
       );
 
-      this.reportObjectUrl = null;
+      this.objectUrl = null;
     }
 
 
@@ -209,8 +288,16 @@ export class ReportsComponent
   }
 
 
+  goBack(): void {
+
+    this.router.navigate([
+      '/employees'
+    ]);
+  }
+
+
   ngOnDestroy(): void {
 
-    this.clearReportPreview();
+    this.clearPreview();
   }
 }

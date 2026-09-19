@@ -37,13 +37,13 @@ export const routes: Routes = [
 
 
   {
-    path: 'reports',
+    path: 'reports/employee/:employeeId',
     loadComponent: () =>
       import(
-        './features/reports/pages/reports/report.component'
+        './features/reports/pages/employee-report/employee-report.component'
       )
       .then(
-        m => m.ReportsComponent
+        m => m.EmployeeReportComponent
       )
   },
 

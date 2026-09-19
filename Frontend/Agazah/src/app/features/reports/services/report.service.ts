@@ -17,6 +17,10 @@ import {
 } from '../../../../environments/environment';
 
 import {
+  ReportEngine
+} from '../models/report-engine.type';
+
+import {
   ReportFormat
 } from '../models/report-format.type';
 
@@ -34,17 +38,22 @@ export class ReportService {
 
 
   getEmployeeReport(
+    employeeId: number,
+    engine: ReportEngine,
     format: ReportFormat
   ): Observable<Blob> {
 
     const params =
       new HttpParams()
+        .set('engine', engine)
         .set('format', format);
 
+
     return this.http.get(
-      `${this.apiUrl}/employees`,
+      `${this.apiUrl}/employees/${employeeId}`,
       {
         params,
+
         responseType: 'blob'
       }
     );
