@@ -1,12 +1,12 @@
 ﻿using Agazah.Application.DTOs.Reports;
 using Agazah.Domain.Enums.ReportEngine;
-namespace Agazah.Application.Interfaces.Reports
+namespace Agazah.Application.Interfaces.Services
 {
-    public interface ISsrsReportClient
+    public interface IEmployeeReportService
     {
         Task<ReportFileDto> RenderAsync(
-            string reportPath,
-            IReadOnlyDictionary<string, string> parameters,
+            long employeeId,
+            ReportEngine engine,
             ReportFormat format,
             CancellationToken cancellationToken = default);
     }

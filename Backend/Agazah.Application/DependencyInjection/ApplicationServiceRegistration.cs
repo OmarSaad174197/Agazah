@@ -1,8 +1,8 @@
+using System.Reflection;
 using Agazah.Application.Interfaces.Services;
 using Agazah.Application.Services;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
-using System.Reflection;
 
 namespace Agazah.Application.DependencyInjection;
 
@@ -17,12 +17,17 @@ public static class ApplicationServiceRegistration
         services.AddValidatorsFromAssembly(
             Assembly.GetExecutingAssembly());
 
-        services.AddScoped<IEmployeeService, EmployeeService>();
+        services.AddScoped<
+            IEmployeeService,
+            EmployeeService>();
 
-        services.AddScoped<IVacationService, VacationService>();
+        services.AddScoped<
+            IVacationService,
+            VacationService>();
 
-        // Add the part which is related to reporting:
-        services.AddScoped<IReportService, ReportService>();
+        services.AddScoped<
+            IEmployeeReportService,
+            EmployeeReportService>();
 
         return services;
     }

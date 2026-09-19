@@ -2,13 +2,13 @@
 using Agazah.Application.DTOs.Reports;
 using Agazah.Application.Exceptions;
 using Agazah.Application.Interfaces.Reports;
+using Agazah.Domain.Enums.ReportEngine;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace Agazah.Infrastructure.Reporting;
 
-public sealed class SsrsReportClient
-    : ISsrsReportClient
+public sealed class SsrsReportClient : ISsrsReportClient
 {
     private readonly HttpClient _httpClient;
     private readonly SsrsOptions _options;
@@ -26,7 +26,8 @@ public sealed class SsrsReportClient
 
     public async Task<ReportFileDto> RenderAsync(
         string reportPath,
-        string format,
+        IReadOnlyDictionary<string, string> parameters,
+        ReportFormat format,
         CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(
@@ -43,54 +44,90 @@ public sealed class SsrsReportClient
                 nameof(reportPath));
         }
 
-        var normalizedFormat =
-            format.Trim().ToUpperInvariant();
-
-        var contentType =
-            normalizedFormat switch
+        var ssrsFormat =
+            format switch
             {
-                "PDF" =>
-                    "application/pdf",
+                ReportFormat.Pdf =>
+                    "PDF",
 
-                "EXCEL" =>
-                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-
-                "HTML5" =>
-                    "text/html",
-
-                "HTML4.0" =>
-                    "text/html",
+                ReportFormat.Excel =>
+                    "EXCEL",
 
                 _ =>
-                    throw new ArgumentException(
-                        "Unsupported report format.",
-                        nameof(format))
+                    throw new ArgumentOutOfRangeException(
+                        nameof(format),
+                        format,
+                        "Unsupported report format.")
+            };
+
+        var contentType =
+            format switch
+            {
+                ReportFormat.Pdf =>
+                    "application/pdf",
+
+                ReportFormat.Excel =>
+                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+
+                _ =>
+                    throw new ArgumentOutOfRangeException(
+                        nameof(format),
+                        format,
+                        "Unsupported report format.")
             };
 
         var extension =
-            normalizedFormat switch
+            format switch
             {
-                "PDF" => "pdf",
-                "EXCEL" => "xlsx",
-                "HTML5" => "html",
-                "HTML4.0" => "html",
-                _ => "bin"
+                ReportFormat.Pdf => "pdf",
+                ReportFormat.Excel => "xlsx",
+
+                _ =>
+                    throw new ArgumentOutOfRangeException(
+                        nameof(format),
+                        format,
+                        "Unsupported report format.")
             };
 
         var reportServerUrl =
-            _options.ReportServerUrl
-                .TrimEnd('/');
+            _options.ReportServerUrl.TrimEnd('/');
+
+        var normalizedReportPath =
+            string.Join(
+                "/",
+                reportPath
+                    .Trim('/')
+                    .Split(
+                        '/',
+                        StringSplitOptions.RemoveEmptyEntries)
+                    .Select(Uri.EscapeDataString));
+
+        var query =
+            new List<string>();
+
+        foreach (
+            var parameter in parameters)
+        {
+            query.Add(
+                $"{Uri.EscapeDataString(parameter.Key)}=" +
+                $"{Uri.EscapeDataString(parameter.Value)}");
+        }
+
+        query.Add("rs:Command=Render");
+
+        query.Add(
+            $"rs:Format={Uri.EscapeDataString(ssrsFormat)}");
 
         var url =
             $"{reportServerUrl}" +
-            $"?{reportPath}" +
-            $"&rs:Command=Render" +
-            $"&rs:Format={Uri.EscapeDataString(normalizedFormat)}";
+            $"?/{normalizedReportPath}" +
+            $"&{string.Join("&", query)}";
 
         _logger.LogInformation(
-            "Rendering SSRS report {ReportPath} in format {Format}.",
+            "Rendering SSRS report {ReportPath} " +
+            "using format {Format}.",
             reportPath,
-            normalizedFormat);
+            ssrsFormat);
 
         using var response =
             await _httpClient.GetAsync(
@@ -102,10 +139,6 @@ public sealed class SsrsReportClient
             response.StatusCode ==
             HttpStatusCode.Unauthorized)
         {
-            _logger.LogError(
-                "SSRS returned 401 Unauthorized for report {ReportPath}.",
-                reportPath);
-
             throw new UnauthorizedAccessException(
                 "SSRS authentication failed.");
         }
@@ -114,10 +147,6 @@ public sealed class SsrsReportClient
             response.StatusCode ==
             HttpStatusCode.Forbidden)
         {
-            _logger.LogError(
-                "SSRS returned 403 Forbidden for report {ReportPath}.",
-                reportPath);
-
             throw new UnauthorizedAccessException(
                 "Access to the SSRS report was denied.");
         }
@@ -126,28 +155,24 @@ public sealed class SsrsReportClient
             response.StatusCode ==
             HttpStatusCode.NotFound)
         {
-            _logger.LogError(
-                "SSRS report {ReportPath} was not found.",
-                reportPath);
-
             throw new NotFoundException(
                 "Report not found.");
         }
 
         if (!response.IsSuccessStatusCode)
         {
-            var errorBody =
-                await response.Content.ReadAsStringAsync(
-                    cancellationToken);
+            var body =
+                await response.Content
+                    .ReadAsStringAsync(
+                        cancellationToken);
 
             _logger.LogError(
-                "SSRS report request failed. " +
-                "StatusCode: {StatusCode}. " +
+                "SSRS returned {StatusCode}. " +
                 "ReportPath: {ReportPath}. " +
                 "Response: {Response}",
                 (int)response.StatusCode,
                 reportPath,
-                errorBody);
+                body);
 
             throw new InvalidOperationException(
                 "SSRS report generation failed.");
@@ -160,10 +185,6 @@ public sealed class SsrsReportClient
 
         if (content.Length == 0)
         {
-            _logger.LogError(
-                "SSRS returned an empty response for {ReportPath}.",
-                reportPath);
-
             throw new InvalidOperationException(
                 "SSRS returned an empty report.");
         }
